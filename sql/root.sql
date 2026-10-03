@@ -20,7 +20,7 @@ CREATE TYPE "seance_status" AS ENUM (
 	'reporté'
 );
 
-CREATE TYPE "PAYMENTS_METHOD" AS ENUM (
+CREATE TYPE "payments_method" AS ENUM (
 	'carte_bancaire',
 	'virement',
 	'cheque',
@@ -29,7 +29,7 @@ CREATE TYPE "PAYMENTS_METHOD" AS ENUM (
 	'autre'
 );
 
-CREATE TYPE "PAYMENTS_STATUS" AS ENUM (
+CREATE TYPE "payments_method" AS ENUM (
 	'en_attente',
 	'valide',
 	'echoue',
