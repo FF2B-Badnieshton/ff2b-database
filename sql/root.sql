@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS "persons" (
 	-- ID de la clée primaire de la commune de la personne
 	"municipality_id" INTEGER,
 	-- Date de création de la personne dans la base de données
-	"creation_date" TIMESTAMPTZ,
+	"creation_date" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("ff2b_id")
 );
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS "licenses" (
 	-- ID de la personne propriétaire de la licence
 	"person_id" UUID NOT NULL,
 	-- ID de la saison durant laquelle la licence est valide
-	"season" INTEGER NOT NULL,
+	"season_id" INTEGER NOT NULL,
 	-- Date de demande de la licence
 	"request_date" DATE NOT NULL,
 	-- Date de validation de la licence
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS "licenses" (
 COMMENT ON COLUMN "licenses"."id" IS 'ID unique de la licence dans l''organisation';
 COMMENT ON COLUMN "licenses"."license_type" IS 'Le type de la licence.';
 COMMENT ON COLUMN "licenses"."person_id" IS 'ID de la personne propriétaire de la licence';
-COMMENT ON COLUMN "licenses"."season" IS 'ID de la saison durant laquelle la licence est valide';
+COMMENT ON COLUMN "licenses"."season_id" IS 'ID de la saison durant laquelle la licence est valide';
 COMMENT ON COLUMN "licenses"."request_date" IS 'Date de demande de la licence';
 COMMENT ON COLUMN "licenses"."validation_date" IS 'Date de validation de la licence';
 COMMENT ON COLUMN "licenses"."beginning_date" IS 'Date de début de la licence';
@@ -287,6 +287,13 @@ CREATE TABLE IF NOT EXISTS "slots" (
 	-- Le jour du créneau (entre 1 et 7)
 	"day_of_week" SMALLINT CHECK(day_of_week BETWEEN 1 AND 7),
 	PRIMARY KEY("id")
+	CONSTRAINTS UNIQUE (
+    'site_id',
+    'season_id',
+    'day_of_week',
+    'start_at',
+    'end_at'
+)
 );
 
 COMMENT ON COLUMN "slots"."id" IS 'ID du créneau';
@@ -303,7 +310,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 	-- ID du créneau pour la séance
 	"slot_id" INTEGER NOT NULL,
 	-- Timestamp de début de séance
-	"start_time" TIMESTAMPTZ NOT NULL,
+	"start_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Durée de la séance (en minutes)
 	"duration" SMALLINT NOT NULL,
 	-- ID du référent de la séance
@@ -319,7 +326,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 
 COMMENT ON COLUMN "sessions"."id" IS 'ID de la séance';
 COMMENT ON COLUMN "sessions"."slot_id" IS 'ID du créneau pour la séance';
-COMMENT ON COLUMN "sessions"."start_time" IS 'Timestamp de début de séance';
+COMMENT ON COLUMN "sessions"."start_at" IS 'Timestamp de début de séance';
 COMMENT ON COLUMN "sessions"."duration" IS 'Durée de la séance (en minutes)';
 COMMENT ON COLUMN "sessions"."referent_id" IS 'ID du référent de la séance';
 COMMENT ON COLUMN "sessions"."coach_id" IS 'ID du coach de la séance';
@@ -336,7 +343,7 @@ CREATE TABLE IF NOT EXISTS "session_participants" (
 	-- ID de la licence
 	"license_id" UUID NOT NULL,
 	-- Valeur enregistrant la présence d'une personne
-	"presence" BOOLEAN NOT NULL,
+	"presence" BOOLEAN NULL,
 	PRIMARY KEY("id"),
 	CONSTRAINT "session_participants_unique_0" UNIQUE ("person_id", "session_id")
 );
@@ -597,9 +604,9 @@ CREATE TABLE IF NOT EXISTS "referents" (
 	-- Date de fin de référent
 	"end_date" DATE,
 	-- Numéro de téléphone professionnel
-	"professionnal_phone" TEXT NOT NULL,
+	"professional_phone" TEXT NOT NULL,
 	-- Adresse mail professionnelle du référent
-	"professionnal_mail" TEXT NOT NULL,
+	"professional_mail" TEXT NOT NULL,
 	-- Statut du référent dans l'organisation
 	"status" INTEGER,
 	PRIMARY KEY("id")
@@ -754,7 +761,7 @@ CREATE TABLE IF NOT EXISTS "contacts" (
 	-- ID de l'organisation
 	"organization_id" INTEGER,
 	-- Date du contact
-	"date" TIMESTAMPTZ,
+	"contact_at" TIMESTAMPTZ,
 	-- ID de la personne responsable au sein de l'association
 	"responsible_id" UUID NOT NULL,
 	-- Sujet du contact
@@ -784,7 +791,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	-- Le status du compte de l'utilisateur 
 	"statut" SMALLINT,
 	-- La date de création du compte utilisateur
-	"creation_date" TIMESTAMPTZ NOT NULL,
+	"creation_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("id")
 );
 
@@ -831,7 +838,7 @@ CREATE TABLE IF NOT EXISTS "consents" (
 	-- Le type de consentement
 	"consent_type_id" INTEGER NOT NULL,
 	-- La date de l'accord donné par la personne
-	"given_at" TIMESTAMPTZ NOT NULL,
+	"given_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Valeur d'acceptation de la personne
 	"is_accepted" BOOLEAN NOT NULL,
 	PRIMARY KEY("id")
@@ -873,7 +880,7 @@ CREATE TABLE IF NOT EXISTS "documents" (
 	-- ID du type de document 
 	"document_type_id" SMALLINT NOT NULL,
 	-- Date d'enregistrement du document dans la base de données
-	"creation_date" TIMESTAMPTZ NOT NULL,
+	"creation_date" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Le type applicatif du document
 	"mime_type" VARCHAR(40),
 	-- La taille du fichier
@@ -1126,7 +1133,7 @@ CREATE TABLE IF NOT EXISTS "payments" (
 	-- Notes sur le paiement
 	"notes" TEXT,
 	-- Date de création du paiement
-	"created_at" TIMESTAMPTZ NOT NULL,
+	"created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Date de mise à jour du paiement
 	"updated_at" TIMESTAMPTZ NOT NULL,
 	PRIMARY KEY("id")
@@ -1157,7 +1164,7 @@ CREATE TABLE IF NOT EXISTS "payments_history" (
 	-- UUID de la personne qui à changé le statut
 	"changed_by" UUID,
 	-- Timestamp du moment du changement
-	"changed_at" TIMESTAMPTZ NOT NULL,
+	"changed_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Raison du changement
 	"reason" TEXT,
 	PRIMARY KEY("id")
@@ -1186,11 +1193,35 @@ COMMENT ON COLUMN "users_status"."id" IS 'ID unique du statut de l''utilisateur'
 COMMENT ON COLUMN "users_status"."code" IS 'Code unique du statut de l''utilisateur';
 COMMENT ON COLUMN "users_status"."label" IS 'Label unique du statut de l''utilisateur';
 
+CREATE TABLE IF NOT EXISTS "logs" (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    user_id UUID,
+
+    action VARCHAR(10) NOT NULL,
+
+    table_name VARCHAR(100) NOT NULL,
+
+    old_data JSONB,
+
+    new_data JSONB,
+
+    CONSTRAINT logs_user_fk
+        FOREIGN KEY ("user_id")
+        REFERENCES "users"("id")
+        ON DELETE SET NULL,
+
+    CONSTRAINT logs_action_check
+        CHECK (action IN ('INSERT', 'UPDATE', 'DELETE'))
+);
+
 ALTER TABLE "competitions"
 ADD FOREIGN KEY("season_id") REFERENCES "seasons"("id")
 ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "licenses"
-ADD FOREIGN KEY("season") REFERENCES "seasons"("id")
+ADD FOREIGN KEY("season_id") REFERENCES "seasons"("id")
 ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "practice_site"
 ADD FOREIGN KEY("municipality_id") REFERENCES "municipalities"("id")
@@ -1453,3 +1484,418 @@ ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "payments_history"
 ADD FOREIGN KEY("changed_by") REFERENCES "users"("id")
 ON UPDATE NO ACTION ON DELETE SET NULL;
+
+-- Index
+
+CREATE INDEX IF NOT EXISTS idx_logs_table_timestamp
+    ON "logs" ("table_name", "timestamp" DESC);
+
+CREATE INDEX IF NOT EXISTS idx_logs_user_timestamp
+    ON "logs" ("user_id", "timestamp" DESC);
+
+CREATE INDEX IF NOT EXISTS idx_logs_action
+    ON "logs" ("action");
+
+CREATE INDEX IF NOT EXISTS idx_logs_old_data_gin
+    ON "logs"
+    USING GIN ("old_data");
+
+CREATE INDEX IF NOT EXISTS idx_logs_new_data_gin
+    ON "logs"
+    USING GIN ("new_data");
+
+CREATE INDEX IF NOT EXISTS idx_persons_municipality_id
+    ON persons (municipality_id);
+
+CREATE INDEX IF NOT EXISTS idx_persons_last_name
+    ON persons (last_name);
+
+CREATE INDEX IF NOT EXISTS idx_persons_birthdate
+    ON persons (birthdate);
+
+
+CREATE INDEX IF NOT EXISTS idx_person_role_person_id
+    ON person_role (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_license_type
+    ON licenses (license_type);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_person_id
+    ON licenses (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_season
+    ON licenses (season_id);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_document_id
+    ON licenses (document_id);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_license_status
+    ON licenses (license_status);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_end_date
+    ON licenses (end_date);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_request_date
+    ON licenses (request_date);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_person_season
+    ON licenses (person_id, season_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_license_type_license_code
+    ON license_type (license_code);
+
+
+CREATE INDEX IF NOT EXISTS idx_municipalities_departements_id
+    ON municipalities (departement_id);
+
+CREATE INDEX IF NOT EXISTS idx_municipalities_name
+    ON municipalities (name);
+
+CREATE INDEX IF NOT EXISTS idx_municipalities_insee_code
+    ON municipalities (insee_code);
+
+
+CREATE INDEX IF NOT EXISTS idx_departments_region_id
+    ON departments (region_id);
+
+CREATE INDEX IF NOT EXISTS idx_departments_code
+    ON departments (code);
+
+
+CREATE INDEX IF NOT EXISTS idx_regions_country_id
+    ON regions (country_id);
+
+CREATE INDEX IF NOT EXISTS idx_regions_code
+    ON regions (code);
+
+
+CREATE INDEX IF NOT EXISTS idx_countries_code
+    ON countries (code);
+
+
+CREATE INDEX IF NOT EXISTS idx_practice_site_municipality_id
+    ON practice_site (municipality_id);
+
+CREATE INDEX IF NOT EXISTS idx_practice_site_name
+    ON practice_site (name);
+
+
+CREATE INDEX IF NOT EXISTS idx_slots_site_id
+    ON slots (site_id);
+
+CREATE INDEX IF NOT EXISTS idx_slots_season_id
+    ON slots (season_id);
+
+CREATE INDEX IF NOT EXISTS idx_slots_site_season
+    ON slots (site_id, season_id);
+
+CREATE INDEX IF NOT EXISTS idx_slots_day_of_week
+    ON slots (day_of_week);
+
+
+CREATE INDEX IF NOT EXISTS idx_sessions_slot_id
+    ON sessions (slot_id);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_referent_id
+    ON sessions (referent_id);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_coach_id
+    ON sessions (coach_id);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_start_time
+    ON sessions (start_at);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_status
+    ON sessions (status);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_slot_start_time
+    ON sessions (slot_id, start_at);
+
+
+CREATE INDEX IF NOT EXISTS idx_session_participants_session_id
+    ON session_participants (session_id);
+
+CREATE INDEX IF NOT EXISTS idx_session_participants_license_id
+    ON session_participants (license_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_competitions_season_id
+    ON competitions (season_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_location_id
+    ON competitions (location_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_practice_site_id
+    ON competitions (practice_site_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_organizer_id
+    ON competitions (organizer_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_format_id
+    ON competitions (format_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_status
+    ON competitions (status);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_rules_document_id
+    ON competitions (rules_document_id);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_date
+    ON competitions (date);
+
+CREATE INDEX IF NOT EXISTS idx_competitions_season_date
+    ON competitions (season_id, date);
+
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_competition_id
+    ON competition_participant (competition_id);
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_person_id
+    ON competition_participant (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_status
+    ON competition_participant (status);
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_category
+    ON competition_participant (category);
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_license_id
+    ON competition_participant (license_id);
+
+CREATE INDEX IF NOT EXISTS idx_competition_participant_competition_person
+    ON competition_participant (competition_id, person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_games_competition_id
+    ON games (competition_id);
+
+CREATE INDEX IF NOT EXISTS idx_games_format_id
+    ON games (format_id);
+
+CREATE INDEX IF NOT EXISTS idx_games_date
+    ON games (date);
+
+CREATE INDEX IF NOT EXISTS idx_games_competition_date
+    ON games (competition_id, date);
+
+
+CREATE INDEX IF NOT EXISTS idx_game_participant_game_side_id
+    ON game_participant (game_side_id);
+
+CREATE INDEX IF NOT EXISTS idx_game_participant_person_id
+    ON game_participant (person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_team_members_person_id
+    ON team_members (person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_referents_person_id
+    ON referents (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_referents_site_id
+    ON referents (site_id);
+
+CREATE INDEX IF NOT EXISTS idx_referents_status
+    ON referents (status);
+
+CREATE INDEX IF NOT EXISTS idx_referents_site_start_date
+    ON referents (site_id, start_date);
+
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_person_id
+    ON volunteers (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_manager_id
+    ON volunteers (manager_id);
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_location
+    ON volunteers (location);
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_start_date
+    ON volunteers (start_date);
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_end_date
+    ON volunteers (end_date);
+
+
+CREATE INDEX IF NOT EXISTS idx_organizations_organization_type_id
+    ON organizations (organization_type_id);
+
+CREATE INDEX IF NOT EXISTS idx_organizations_municipality_id
+    ON organizations (municipality_id);
+
+CREATE INDEX IF NOT EXISTS idx_organizations_name
+    ON organizations (name);
+
+
+CREATE INDEX IF NOT EXISTS idx_organizations_contact_organization_id
+    ON organizations_contact (organization_id);
+
+CREATE INDEX IF NOT EXISTS idx_organizations_contact_person_id
+    ON organizations_contact (person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_prospects_person_id
+    ON prospects (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_prospects_organization_id
+    ON prospects (organization_id);
+
+CREATE INDEX IF NOT EXISTS idx_prospects_type
+    ON prospects (type);
+
+CREATE INDEX IF NOT EXISTS idx_prospects_status
+    ON prospects (status);
+
+
+CREATE INDEX IF NOT EXISTS idx_contacts_person_id
+    ON contacts (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_organization_id
+    ON contacts (organization_id);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_responsible_id
+    ON contacts (responsible_id);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_date
+    ON contacts (date);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_responsible_date
+    ON contacts (responsible_id, date);
+
+
+CREATE INDEX IF NOT EXISTS idx_users_person_id
+    ON users (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_users_email
+    ON users (email);
+
+CREATE INDEX IF NOT EXISTS idx_users_statut
+    ON users (statut);
+
+
+CREATE INDEX IF NOT EXISTS idx_users_roles_user_id
+    ON users_roles (user_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_consents_person_id
+    ON consents (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_consents_consent_type_id
+    ON consents (consent_type_id);
+
+CREATE INDEX IF NOT EXISTS idx_consents_person_type
+    ON consents (person_id, consent_type_id);
+
+CREATE INDEX IF NOT EXISTS idx_consents_given_at
+    ON consents (given_at);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_document_type_id
+    ON documents (document_type_id);
+
+CREATE INDEX IF NOT EXISTS idx_documents_uploaded_by
+    ON documents (uploaded_by);
+
+CREATE INDEX IF NOT EXISTS idx_documents_hash
+    ON documents (hash);
+
+CREATE INDEX IF NOT EXISTS idx_documents_creation_date
+    ON documents (creation_date);
+
+CREATE INDEX IF NOT EXISTS idx_documents_expires_at
+    ON documents (expires_at);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_persons_person_id
+    ON documents_persons (person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_competitions_competition_id
+    ON documents_competitions (competition_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_licenses_license_id
+    ON documents_licenses (license_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_projects_project_id
+    ON documents_projects (project_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_commissions_commission_id
+    ON documents_commissions (commission_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_organizations_organization_id
+    ON documents_organizations (organization_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_documents_practices_sites_practice_site_id
+    ON documents_practices_sites (practice_site_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_projects_status
+    ON projects (status);
+
+CREATE INDEX IF NOT EXISTS idx_projects_start_date
+    ON projects (start_date);
+
+CREATE INDEX IF NOT EXISTS idx_projects_end_date
+    ON projects (end_date);
+
+CREATE INDEX IF NOT EXISTS idx_projects_status_start_date
+    ON projects (status, start_date);
+
+
+CREATE INDEX IF NOT EXISTS idx_projects_members_person_id
+    ON projects_members (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_projects_members_project_role
+    ON projects_members (project_role);
+
+
+CREATE INDEX IF NOT EXISTS idx_commissions_president_id
+    ON commissions (president_id);
+
+CREATE INDEX IF NOT EXISTS idx_commissions_name
+    ON commissions (name);
+
+
+CREATE INDEX IF NOT EXISTS idx_commissions_members_person_id
+    ON commissions_members (person_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_payments_person_id
+    ON payments (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_payments_license_id
+    ON payments (license_id);
+
+CREATE INDEX IF NOT EXISTS idx_payments_payment_status
+    ON payments (payment_status);
+
+CREATE INDEX IF NOT EXISTS idx_payments_payment_date
+    ON payments (payment_date);
+
+CREATE INDEX IF NOT EXISTS idx_payments_person_date
+    ON payments (person_id, payment_date);
+
+CREATE INDEX IF NOT EXISTS idx_payments_license_date
+    ON payments (license_id, payment_date);
+
+
+CREATE INDEX IF NOT EXISTS idx_payments_history_payment_id
+    ON payments_history (payment_id);
+
+CREATE INDEX IF NOT EXISTS idx_payments_history_changed_by
+    ON payments_history (changed_by);
+
+CREATE INDEX IF NOT EXISTS idx_payments_history_changed_at
+    ON payments_history (changed_at);
+
+CREATE INDEX IF NOT EXISTS idx_payments_history_payment_changed_at
+    ON payments_history (payment_id, changed_at);
+
