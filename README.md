@@ -1,3 +1,6 @@
+>[!warning] Attention
+>Veuillez ne pas modifier ce dépôt, il n'est là seulement pour la documentation
+
 # FF2B - Base de Données
 
 Ce dépôt contient la modélisation, le schéma physique SQL et la documentation technique de la base de données relationnelle centrale de la **Fédération Française de Badnieshton (FF2B)**. 
