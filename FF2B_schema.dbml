@@ -1,0 +1,925 @@
+enum licence_status {
+	brouillon
+	"demandée"
+	"en attente"
+	"validée"
+	suspendue
+	"expirée"
+	"annulée"
+}
+
+enum contact_origin {
+	internet
+	IA
+	"téléphone"
+	email
+}
+
+enum seance_status {
+	"annulé"
+	"reporté"
+}
+
+enum PAYMENTS_METHOD {
+	carte_bancaire
+	virement
+	cheque
+	especes
+	pass_sport
+	autre
+}
+
+enum PAYMENTS_STATUS {
+	en_attente
+	valide
+	echoue
+	rembourse
+	annule
+}
+
+Table persons [headercolor: #f2463a] {
+	ff2b_id uuid [ pk, not null, unique, note: 'Identifiant unique de la personne au sein de l''organisation' ]
+	first_name text [ not null, note: 'Prénom de la personne' ]
+	last_name text [ not null, note: 'Nom de famille de la personne' ]
+	birthdate date [ not null, note: 'Date de naissance de la personne' ]
+	phone_number text [ not null, note: 'Numéro de téléphone de la personne' ]
+	email text [ not null, unique, note: 'Adresse email de la personne' ]
+	status varchar(40) [ note: 'Status de la personne dans l''organisation' ]
+	contact_origin contact_origin [ not null, note: 'L''origine du contact avec la personne' ]
+	address varchar(255) [ note: 'Adresse postale de la personne ' ]
+	municipality_id integer [ note: 'ID de la clée primaire de la commune de la personne' ]
+	creation_date timestamptz [ note: 'Date de création de la personne dans la base de données' ]
+}
+
+Table person_role [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du rôle de la personne' ]
+	role_id smallint [ not null, note: 'ID du rôle' ]
+	person_id uuid [ not null, note: 'ID de la personne' ]
+
+	indexes {
+		(role_id, person_id) [ name: 'person_role_unique_0', unique ]
+	}
+}
+
+Table roles [headercolor: #175e7a] {
+	id smallint [ pk, increment, not null, note: 'L''identifiant unique du role' ]
+	code text [ not null, unique, note: 'Le code unique du rôle' ]
+	label text [ not null, unique, note: 'Le texte affiché du rôle dans le système' ]
+}
+
+Table licenses [headercolor: #fa8282] {
+	id uuid [ pk, not null, note: 'ID unique de la licence dans l''organisation' ]
+	license_type integer [ not null, note: 'Le type de la licence.' ]
+	person_id uuid [ not null, note: 'ID de la personne propriétaire de la licence' ]
+	season integer [ not null, note: 'ID de la saison durant laquelle la licence est valide' ]
+	request_date date [ not null, note: 'Date de demande de la licence' ]
+	validation_date date [ note: 'Date de validation de la licence' ]
+	beginning_date date [ note: 'Date de début de la licence' ]
+	end_date date [ note: 'Date de fin de validité de la licence' ]
+	license_status licence_status [ not null, note: 'Le statut de la licence' ]
+	document_id uuid [ note: 'ID du document de certificat de la licence' ]
+}
+
+Table license_type [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID Unique du type de licence' ]
+	license_code text [ not null, unique, note: 'Code du type de licence' ]
+	license_label text [ not null, unique, note: 'Texte affiché du type de licence' ]
+
+	indexes {
+		(license_code, license_label) [ name: 'license_type_unique_0', unique ]
+	}
+}
+
+Table season [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique de la saison' ]
+	start_year smallint [ not null, note: 'Année de début de la saison' ]
+	end_year smallint [ not null, note: 'Année de fin de la saison' ]
+
+	indexes {
+		(start_year, end_year) [ name: 'season_unique_0', unique ]
+	}
+}
+
+Table municipalities [headercolor: #016101] {
+	id integer [ pk, increment, not null, note: 'ID unique de la commune' ]
+	name text [ not null, note: 'Nom de la commune' ]
+	zip_code text [ not null, note: 'Le code postale de la commune' ]
+	insee_code varchar(10) [ note: 'Code INSEE de la commune' ]
+	departement_id integer [ not null, note: 'ID du département de la commune' ]
+	development_status text [ not null, note: 'Status de développement de la commune' ]
+}
+
+Table departments [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du departement' ]
+	name text [ not null, note: 'Nom du département' ]
+	code text [ not null, note: 'Code du département' ]
+	region_id integer [ not null, note: 'ID de la région dans laquelle se trouve la commune' ]
+}
+
+Table regions [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de la région ' ]
+	name text [ not null, note: 'Nom de la région' ]
+	code text [ note: 'Code de la region, si disponible' ]
+	country_id integer [ not null, note: 'ID du pays correspondant' ]
+}
+
+Table countries [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du pays' ]
+	name text [ not null, note: 'Le nom du pays' ]
+	code text [ not null, note: 'Code du pays ' ]
+}
+
+Table practice_site [headercolor: #a6fca2] {
+	id integer [ pk, increment, not null, note: 'ID du site de pratique' ]
+	name text [ not null, note: 'Nom du site de pratique' ]
+	municipality_id integer [ not null, note: 'ID de la municipalité' ]
+	address text [ note: 'Adresse du site de pratique' ]
+	opening_date date [ note: 'Date d''ouverture du site de pratique' ]
+	closing_date date [ note: 'Date de fermeture du site de pratique ' ]
+}
+
+Table slots [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du créneau' ]
+	site_id integer [ not null, note: 'ID du site appartenant au créneau' ]
+	season_id integer [ not null, note: 'ID de la saison' ]
+	start_at time [ not null, note: 'Timestamp de début de créneau' ]
+	end_at time [ not null, note: 'Timestamp de fin de créneau' ]
+	capacity smallint [ note: 'Capacité d''effectif' ]
+	day_of_week smallint [ note: 'Le jour du créneau (entre 1 et 7)' ]
+}
+
+Table sessions [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de la séance' ]
+	slot_id integer [ not null, note: 'ID du créneau pour la séance' ]
+	start_time timestamptz [ not null, note: 'Timestamp de début de séance' ]
+	duration smallint [ not null, note: 'Durée de la séance (en minutes)' ]
+	referent_id integer [ note: 'ID du référent de la séance' ]
+	coach_id uuid [ note: 'ID du coach de la séance' ]
+	content text [ note: 'Contenu de la séance' ]
+	status seance_status [ note: 'Statut de la séance' ]
+}
+
+Table session_participants [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de combinaison participant séance' ]
+	person_id uuid [ not null, note: 'ID de la personne' ]
+	session_id integer [ not null, note: 'ID de la séance' ]
+	license_id uuid [ not null, note: 'ID de la licence' ]
+	presence boolean [ not null, note: 'Valeur enregistrant la présence d''une personne' ]
+
+	indexes {
+		(person_id, session_id) [ name: 'session_participants_unique_0', unique ]
+	}
+}
+
+Table competitions [headercolor: #0abaff] {
+	id integer [ pk, increment, not null, note: 'ID de la compétition' ]
+	season_id integer [ not null, note: 'ID de la saison auquel la compétition appartient' ]
+	date date [ not null, note: 'Date de la compétition' ]
+	location_id integer [ not null, note: 'Lieu de la compétition' ]
+	practice_site_id integer [ not null, note: 'ID du site de pratique' ]
+	organizer_id uuid [ not null, note: 'ID de l''organisateur' ]
+	format_id smallint [ not null, note: 'ID référant au format de la compétition' ]
+	status integer [ note: 'Statut de la compétition' ]
+	rules_document_id uuid [ note: 'Clée étrangère vers le document des règles dans la BDD' ]
+}
+
+Table competition_format [headercolor: #77aebf] {
+	id smallint [ pk, increment, not null, note: 'ID du format de compétition' ]
+	code text [ not null, unique, note: 'Code du format de compétition' ]
+	label text [ not null, unique, note: 'Texte affiché du format de la compétition' ]
+}
+
+Table competition_status [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du statut de compétition' ]
+	code text [ not null, unique, note: 'Code unique du statut de la compétition' ]
+	label text [ not null, unique, note: 'Texte affiché du statut de la compétition' ]
+}
+
+Table competition_participant [headercolor: #8edbfa] {
+	id integer [ pk, increment, not null, note: 'ID unique de la participation à la compétition' ]
+	competition_id integer [ not null, note: 'ID de la compétition' ]
+	person_id uuid [ not null, note: 'UUID de la personne' ]
+	status integer [ not null, note: 'Status de la participation à la compétition' ]
+	category integer [ not null, note: 'Catégorie de la participation' ]
+	license_id uuid [ not null, note: 'UUID de la licence du participant' ]
+	ranking_before smallint [ note: 'Classement avant participation' ]
+	ranking_after smallint [ note: 'Classement après modification' ]
+}
+
+Table competition_participant_status [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du statut du participant de la compétition' ]
+	code text [ not null, unique, note: 'Code unique du statut du participant de la compétition' ]
+	label text [ not null, unique, note: 'Label du statut du participant de la compétition' ]
+
+	indexes {
+		(code, label) [ name: 'competition_participant_status_unique_0', unique ]
+	}
+}
+
+Table competition_participant_category [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de la catégorie du participant de la compétition' ]
+	code text [ not null, unique, note: 'Code unique de la catégorie du participant de la compétition' ]
+	label text [ not null, unique, note: 'Label de la catégorie du participant de la compétition' ]
+
+	indexes {
+		(code, label) [ name: 'competition_participant_category_unique_0', unique ]
+	}
+}
+
+Table games [headercolor: #faf202] {
+	id integer [ pk, increment, not null, note: 'ID du match' ]
+	competition_id integer [ note: 'ID de la compétition' ]
+	format_id smallint [ not null, note: 'ID du format du match' ]
+	date timestamptz [ not null, note: 'Timestamp du match' ]
+}
+
+Table game_format [headercolor: #02080a] {
+	id smallint [ pk, increment, not null, note: 'ID du format de match' ]
+	code text [ not null, unique, note: 'Code unique du format' ]
+	label text [ not null, unique, note: 'Label unique du format' ]
+}
+
+Table game_participant [headercolor: #f5f5c1] {
+	id integer [ pk, increment, not null, note: 'ID de la participation à la partie' ]
+	game_side_id integer [ not null, note: 'ID du côté du participant' ]
+	ranking_before smallint [ not null, note: 'Classement avant participation' ]
+	ranking_after smallint [ note: 'Classement après le match' ]
+	elo_before smallint [ note: 'ELO avant match' ]
+	elo_after smallint [ note: 'ELO après match' ]
+	person_id uuid [ not null, note: 'ID de la personne' ]
+}
+
+Table game_side [headercolor: #f2e3a0] {
+	id integer [ pk, increment, not null, note: 'ID du côté du match' ]
+	game_id integer [ not null, note: 'ID du match' ]
+	side_number smallint [ not null, note: 'Le numéro du côté du match (1, 2)' ]
+
+	indexes {
+		(game_id, side_number) [ name: 'game_side_unique_0', unique ]
+	}
+}
+
+Table game_side_result [headercolor: #727a01] {
+	id integer [ pk, increment, not null, note: 'ID du résultat d''un côté du match' ]
+	game_side_id integer [ not null, unique, note: 'ID du côté du match' ]
+	nieshs_scored smallint [ not null, note: 'La valeur de nieshs marqué' ]
+	nieshs_conceded smallint [ not null, note: 'La valeur de nieshs concédé' ]
+	result smallint [ not null, note: 'Le résultat du côté du match' ]
+}
+
+Table team [headercolor: #9702fa] {
+	id integer [ pk, increment, not null, note: 'ID unique de l''équipe' ]
+	competition_id integer [ not null, note: 'ID de la compétition dans laquelle l''équipe est inscrite ' ]
+	name text [ not null, note: 'Nom de l''équipe' ]
+
+	indexes {
+		(competition_id, name) [ name: 'team_unique_0', unique ]
+	}
+}
+
+Table team_members [headercolor: #c95eff] {
+	team_id integer [ pk, not null, note: 'ID de l''équipe' ]
+	person_id uuid [ pk, not null, note: 'UUID du membre de l''équipe' ]
+
+	indexes {
+		(team_id, person_id) [ name: 'team_members_unique_0', unique ]
+	}
+}
+
+Table referents [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du référent' ]
+	person_id uuid [ not null, note: 'UUID de la personne' ]
+	site_id integer [ not null, note: 'ID du site de pratique' ]
+	start_date date [ not null, note: 'Date de début de rôle de référent' ]
+	end_date date [ note: 'Date de fin de référent' ]
+	professionnal_phone text [ not null, note: 'Numéro de téléphone professionnel' ]
+	professionnal_mail text [ not null, note: 'Adresse mail professionnelle du référent' ]
+	status integer [ note: 'Statut du référent dans l''organisation' ]
+}
+
+Table referent_status [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du statut de référent' ]
+	code text [ not null, note: 'Code du type de référent' ]
+	label text [ not null, note: 'Texte affiché du référent' ]
+}
+
+Table volunteers [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID Unique du volontaire' ]
+	person_id uuid [ not null, note: 'UUID de la personne' ]
+	manager_id uuid [ not null, note: 'UUID du manager' ]
+	mission text [ note: 'Le contenu de la mission à effectuer' ]
+	skills text [ note: 'Les compétences de la personne' ]
+	availability text [ note: 'Contenu de la disponibilité du volontaire' ]
+	location integer [ not null, note: 'ID du la localisation du volontaire' ]
+	application_date date [ note: 'Date de demande de volontariat' ]
+	observations text [ note: 'Contenu de l''observation' ]
+	start_date date [ not null, note: 'Début de la période de volontariat' ]
+	end_date date [ note: 'Fin de la période de volontariat' ]
+	tasks text [ note: 'Tâches effectués par le volontaire' ]
+}
+
+Table organizations [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de l''organisation' ]
+	name text [ not null, note: 'Nom de l''organisation' ]
+	organization_type_id smallint [ not null, note: 'ID du type d''organisation' ]
+	municipality_id integer [ note: 'ID de la commune dans laquelle se trouve l''organisation' ]
+}
+
+Table organizations_type [headercolor: #175e7a] {
+	id smallint [ pk, increment, not null, note: 'ID du type de l''organisation' ]
+	code text [ not null, note: 'Code du type de l''organisation' ]
+	label text [ not null, note: 'Texte affiché du type de l''organisation' ]
+}
+
+Table organizations_contact [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du contact de l''organisation' ]
+	organization_id integer [ not null, note: 'ID de l''organisation' ]
+	person_id uuid [ not null, note: 'ID du gérant de l''organisation' ]
+	function text [ note: 'Fonction de la personne contacté' ]
+	start_date date [ note: 'Date de début du contact' ]
+	end_date date [ note: 'Date de fin du contact' ]
+}
+
+Table prospects [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du prospect' ]
+	person_id uuid [ note: 'UUID de la personne ' ]
+	organization_id integer [ note: 'ID de l''organisation' ]
+	type text [ note: 'Le type de prospect' ]
+	status text [ note: 'Statut de la prospection' ]
+	interest text [ note: 'Intérêt du prospect' ]
+}
+
+Table contacts [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du contact' ]
+	person_id uuid [ note: 'ID de la personne' ]
+	organization_id integer [ note: 'ID de l''organisation' ]
+	date timestamptz [ note: 'Date du contact' ]
+	responsible_id uuid [ not null, note: 'ID de la personne responsable au sein de l''association' ]
+	subject text [ note: 'Sujet du contact' ]
+	notes text [ note: 'Notes de l''interaction' ]
+}
+
+Table users [headercolor: #175e7a] {
+	id uuid [ pk, not null, note: 'ID du l''utilisateur sur les plateformes numériques de l''association' ]
+	person_id uuid [ not null, note: 'UUID de la personne ' ]
+	email text [ not null, note: 'Adresse mail de l''utilisateur sur les plateformes numériques' ]
+	password text [ not null, note: 'Mot de passe hashé de l''utilisateur' ]
+	statut smallint [ note: 'Le status du compte de l''utilisateur ' ]
+	creation_date timestamptz [ not null, note: 'La date de création du compte utilisateur' ]
+}
+
+Table access_roles [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du rôle' ]
+	code text [ not null, unique, note: 'Code du rôle' ]
+	label text [ not null, unique, note: 'Texte affiché du rôle' ]
+}
+
+Table users_roles [headercolor: #175e7a] {
+	role_id integer [ pk, not null, note: 'ID du rôle' ]
+	user_id uuid [ pk, not null, note: 'ID de l''utilisateur' ]
+
+	indexes {
+		(role_id, user_id) [ name: 'users_roles_unique_0', unique ]
+	}
+}
+
+Table consents [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du consentement' ]
+	person_id uuid [ not null, note: 'UUID de la personne' ]
+	consent_type_id integer [ not null, note: 'Le type de consentement' ]
+	given_at timestamptz [ not null, note: 'La date de l''accord donné par la personne' ]
+	is_accepted boolean [ not null, note: 'Valeur d''acceptation de la personne' ]
+}
+
+Table consents_type [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du type de consentement' ]
+	code text [ not null, unique, note: 'Code unique du type de consentement' ]
+	label text [ not null, note: 'Texte affiché du type de consentement' ]
+	description text [ note: 'Description du type de consentement' ]
+	is_mandatory boolean [ not null, note: 'Champ pour savoir si l''acceptation est obligatoire pour s''inscrire' ]
+}
+
+Table documents [headercolor: #175e7a] {
+	id uuid [ pk, not null, note: 'ID Unique du document' ]
+	filename text [ not null, note: 'Le nom du fichier' ]
+	storage_path text [ not null, note: 'Le lien du fichier sur la plateforme de stockage' ]
+	document_type_id smallint [ not null, note: 'ID du type de document ' ]
+	creation_date timestamptz [ not null, note: 'Date d''enregistrement du document dans la base de données' ]
+	mime_type varchar(40) [ note: 'Le type applicatif du document' ]
+	file_size integer [ not null, note: 'La taille du fichier' ]
+	hash varchar(64) [ not null, note: 'Le hash du fichier' ]
+	uploaded_by uuid [ note: 'L''UUID de la personne qui a uploadé le fichier' ]
+	expires_at timestamptz [ note: 'La date d''expiration du document (si dispo)' ]
+}
+
+Table document_type [headercolor: #175e7a] {
+	id smallint [ pk, increment, not null, note: 'ID du type de document ' ]
+	document_code text [ not null, unique, note: 'Le code du type de document dans la base de données' ]
+	document_label text [ not null, note: 'Le texte affiché dans les applications' ]
+}
+
+Table documents_persons [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	person_id uuid [ pk, not null, note: 'UUID de la personne' ]
+
+	indexes {
+		(document_id, person_id) [ name: 'documents_persons_unique_0', unique ]
+	}
+}
+
+Table documents_competitions [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	competition_id integer [ pk, not null, note: 'UUID de la compétition' ]
+
+	indexes {
+		(document_id, competition_id) [ name: 'documents_competitions_unique_0', unique ]
+	}
+}
+
+Table documents_licenses [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	license_id uuid [ pk, not null, note: 'UUID de la licence' ]
+
+	indexes {
+		(document_id, license_id) [ name: 'documents_licenses_unique_0', unique ]
+	}
+}
+
+Table documents_projects [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	project_id integer [ pk, not null, note: 'ID du projet' ]
+
+	indexes {
+		(document_id, project_id) [ name: 'documents_projects_unique_0', unique ]
+	}
+}
+
+Table documents_commissions [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'IUUID du document' ]
+	commission_id integer [ pk, not null, note: 'ID de la commission' ]
+
+	indexes {
+		(document_id, commission_id) [ name: 'documents_commissions_unique_0', unique ]
+	}
+}
+
+Table documents_organizations [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	organization_id integer [ pk, not null, note: 'ID de l''organisation' ]
+
+	indexes {
+		(document_id, organization_id) [ name: 'documents_organizations_unique_0', unique ]
+	}
+}
+
+Table documents_practices_sites [headercolor: #175e7a] {
+	document_id uuid [ pk, not null, note: 'UUID du document' ]
+	practice_site_id integer [ pk, not null, note: 'ID du site de pratique' ]
+
+	indexes {
+		(document_id, practice_site_id) [ name: 'documents_practices_sites_unique_0', unique ]
+	}
+}
+
+Table projects [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du projet' ]
+	name text [ not null, note: 'Nom du projet' ]
+	description text [ note: 'Description du projet' ]
+	status smallint [ not null, note: 'ID du statut du projet ' ]
+	start_date date [ not null, note: 'Date de début du projet' ]
+	end_date date [ note: 'Date de fin du projet' ]
+}
+
+Table projects_members [headercolor: #175e7a] {
+	project_id integer [ pk, not null, note: 'ID du projet' ]
+	person_id uuid [ pk, not null, note: 'UUID de la personne' ]
+	project_role integer [ not null, note: 'ID du rôle de la personne dans le projet' ]
+	joined_at date [ note: 'Date à laquelle le membre à rejoint le projet' ]
+
+	indexes {
+		(project_id, person_id) [ name: 'projects_members_unique_0', unique ]
+	}
+}
+
+Table project_members_role [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID du rôle de projet' ]
+	code text [ not null, unique, note: 'Code unique du rôle du projet' ]
+	label text [ not null, unique, note: 'Label du rôle de projet' ]
+}
+
+Table projects_status [headercolor: #175e7a] {
+	id smallint [ pk, increment, not null, note: 'ID du statut du projet' ]
+	code text [ not null, unique, note: 'Code du statut du projet' ]
+	label text [ not null, unique, note: 'Label du statut du projet' ]
+}
+
+Table commissions [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de la commission' ]
+	name text [ not null, note: 'Nom de la commission' ]
+	code text [ not null, unique, note: 'Code de la commission' ]
+	description text [ note: 'Description de la commission' ]
+	president_id uuid [ not null, note: 'UUID du président de la commission' ]
+	creation_date timestamptz [ not null, note: 'Date de création de la commission' ]
+}
+
+Table commissions_members [headercolor: #175e7a] {
+	commission_id integer [ pk, not null, note: 'ID de la commission' ]
+	person_id uuid [ pk, not null, note: 'ID du membre de la commission' ]
+	joined_at date [ not null, note: 'Date à laquelle le membre à joint la commission' ]
+
+	indexes {
+		(commission_id, person_id) [ name: 'commissions_members_unique_0', unique ]
+	}
+}
+
+Table payments [headercolor: #175e7a] {
+	id uuid [ pk, not null, note: 'ID du paiement' ]
+	person_id uuid [ not null, note: 'UUID de la personne' ]
+	license_id uuid [ not null, note: 'UUID de la licence' ]
+	amount numeric(8,2) [ not null, note: 'Le montant du paiement' ]
+	currency varchar(3) [ not null ]
+	payment_method PAYMENTS_METHOD [ not null, note: 'Méthode de paiement' ]
+	payment_status PAYMENTS_STATUS [ not null, note: 'Statut du paiement' ]
+	payment_date timestamptz [ not null, note: 'Date du paiement' ]
+	transaction_reference text [ not null, unique, note: 'Référence de la transaction' ]
+	invoice_document uuid [ note: 'UUID du document de facture' ]
+	notes text [ note: 'Notes sur le paiement' ]
+	created_at timestamptz [ not null, note: 'Date de création du paiement' ]
+	updated_at timestamptz [ not null, note: 'Date de mise à jour du paiement' ]
+}
+
+Table payments_history [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID de l''historique' ]
+	payment_id uuid [ not null, note: 'ID du paiement' ]
+	previous_status PAYMENTS_STATUS [ not null, note: 'Statut précédent' ]
+	new_status PAYMENTS_STATUS [ not null, note: 'Nouveau statut' ]
+	changed_by uuid [ note: 'UUID de la personne qui à changé le statut' ]
+	changed_at timestamptz [ not null, note: 'Timestamp du moment du changement' ]
+	reason text [ note: 'Raison du changement' ]
+}
+
+Table users_status [headercolor: #175e7a] {
+	id integer [ pk, increment, not null, note: 'ID unique du statut de l''utilisateur' ]
+	code text [ not null, unique, note: 'Code unique du statut de l''utilisateur' ]
+	label text [ not null, unique, note: 'Label unique du statut de l''utilisateur' ]
+
+	indexes {
+		(code, label) [ name: 'users_status_unique_0', unique ]
+	}
+}
+
+Ref fk_competitions_season_season {
+	competitions.season_id > season.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_licences_season_season {
+	licenses.season > season.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_practice_site_municipality_id_municipalities {
+	practice_site.municipality_id > municipalities.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_competitions_location_municipalities {
+	competitions.location_id > municipalities.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_competitions_practice_site_practice_site {
+	competitions.practice_site_id > practice_site.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_competitions_organizer_Personnes {
+	competitions.organizer_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_competitions_format_competition_format {
+	competitions.format_id > competition_format.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_participants_person_id_Personnes {
+	competition_participant.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_games_competition_id_competitions {
+	games.competition_id > competitions.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_games_format_id_game_format {
+	games.format_id > game_format.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_team_competition_id_competitions {
+	team.competition_id > competitions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_team_members_person_id_persons {
+	team_members.person_id > persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_team_members_team_id_team {
+	team_members.team_id > team.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_game_side_game_id_games {
+	game_side.game_id > games.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_game_side_result_game_side_id_game_side {
+	game_side_result.game_side_id > game_side.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_competition_participant_license_id_licenses {
+	competition_participant.license_id > licenses.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_game_participant_game_side_id_game_side {
+	game_participant.game_side_id > game_side.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_game_participant_person_id_persons {
+	game_participant.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_users_person_id_persons {
+	users.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_licenses_license_type_licence_type {
+	licenses.license_type > license_type.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_slots_site_id_practice_site {
+	slots.site_id > practice_site.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_slots_season_id_season {
+	slots.season_id > season.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_referents_person_id_persons {
+	referents.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_referents_site_id_practice_site {
+	referents.site_id > practice_site.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_sessions_slot_id_slots {
+	sessions.slot_id > slots.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_sessions_referent_id_referents {
+	sessions.referent_id > referents.id [ delete: set null, update: no action ]
+}
+
+Ref fk_session_participants_session_id_sessions {
+	session_participants.session_id > sessions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_session_participants_license_id_licenses {
+	session_participants.license_id > licenses.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_session_participants_person_id_persons {
+	session_participants.person_id > persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_volunteers_person_id_persons {
+	volunteers.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_volunteers_manager_id_persons {
+	volunteers.manager_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_volunteers_location_municipalities {
+	volunteers.location > municipalities.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_contacts_person_id_persons {
+	contacts.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_contacts_organization_id_organizations {
+	contacts.organization_id > organizations.id [ delete: set null, update: no action ]
+}
+
+Ref fk_contacts_responsible_id_persons {
+	contacts.responsible_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_users_roles_user_id_users {
+	users_roles.user_id > users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_prospects_organization_id_organizations {
+	prospects.organization_id > organizations.id [ delete: set null, update: no action ]
+}
+
+Ref fk_organizations_contact_person_id_persons {
+	organizations_contact.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_person_role_person_id_persons {
+	person_role.person_id > persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_persons_municipality_id_municipalities {
+	persons.municipality_id > municipalities.id [ delete: set null, update: no action ]
+}
+
+Ref fk_person_role_role_id_roles {
+	person_role.role_id > roles.id [ delete: no action, update: no action ]
+}
+
+Ref fk_competition_participant_competition_id_competitions {
+	competition_participant.competition_id > competitions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_document_type_id_document_type {
+	documents.document_type_id > document_type.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_licenses_document_id_documents {
+	licenses.document_id > documents.id [ delete: set null, update: no action ]
+}
+
+Ref fk_municipalities_departement_id_departments {
+	municipalities.departement_id > departments.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_departments_region_id_regions {
+	departments.region_id > regions.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_regions_country_id_countries {
+	regions.country_id > countries.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_referents_status_referent_status {
+	referents.status > referent_status.id [ delete: no action, update: no action ]
+}
+
+Ref fk_organizations_organization_type_id_organizations_type {
+	organizations.organization_type_id > organizations_type.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_users_roles_role_id_access_roles {
+	users_roles.role_id > access_roles.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_prospects_person_id_persons {
+	prospects.person_id > persons.ff2b_id [ delete: set null, update: no action ]
+}
+
+Ref fk_organizations_municipality_id_municipalities {
+	organizations.municipality_id > municipalities.id [ delete: set null, update: no action ]
+}
+
+Ref fk_organizations_contact_organization_id_organizations {
+	organizations_contact.organization_id > organizations.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_competitions_rules_document_id_documents {
+	competitions.rules_document_id > documents.id [ delete: set null, update: no action ]
+}
+
+Ref fk_licenses_person_id_persons {
+	licenses.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_consents_consent_type_id_consents_type {
+	consents.consent_type_id > consents_type.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_consents_person_id_persons {
+	consents.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_documents_uploaded_by_users {
+	documents.uploaded_by > users.id [ delete: set null, update: no action ]
+}
+
+Ref fk_competitions_status_competition_status {
+	competitions.status > competition_status.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_documents_persons_document_id_documents {
+	documents_persons.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_practices_sites_document_id_documents {
+	documents_practices_sites.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_commissions_document_id_documents {
+	documents_commissions.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_projects_document_id_documents {
+	documents_projects.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_competitions_document_id_documents {
+	documents_competitions.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_licenses_document_id_documents {
+	documents_licenses.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_organizations_document_id_documents {
+	documents_organizations.document_id - documents.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_organizations_organization_id_organizations {
+	documents_organizations.organization_id - organizations.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_competitions_competition_id_competitions {
+	documents_competitions.competition_id - competitions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_licenses_license_id_licenses {
+	documents_licenses.license_id - licenses.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_persons_person_id_persons {
+	documents_persons.person_id - persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_projects_status_projects_status {
+	projects.status > projects_status.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_projects_members_project_id_projects {
+	projects_members.project_id - projects.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_projects_members_person_id_persons {
+	projects_members.person_id - persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_projects_members_project_role_project_members_role {
+	projects_members.project_role > project_members_role.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_documents_projects_project_id_projects {
+	documents_projects.project_id - projects.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_commissions_president_id_persons {
+	commissions.president_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_commissions_members_commission_id_commissions {
+	commissions_members.commission_id - commissions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_commissions_members_person_id_persons {
+	commissions_members.person_id - persons.ff2b_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_documents_commissions_commission_id_commissions {
+	documents_commissions.commission_id - commissions.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_competition_participant_category_competition_participant_category {
+	competition_participant.category > competition_participant_category.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_competition_participant_status_competition_participant_status {
+	competition_participant.status > competition_participant_status.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_payments_history_payment_id_payments {
+	payments_history.payment_id > payments.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_payments_invoice_document_documents {
+	payments.invoice_document > documents.id [ delete: set null, update: no action ]
+}
+
+Ref fk_payments_person_id_persons {
+	payments.person_id > persons.ff2b_id [ delete: restrict, update: no action ]
+}
+
+Ref fk_payments_license_id_licenses {
+	payments.license_id > licenses.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_documents_practices_sites_practice_site_id_practice_site {
+	documents_practices_sites.practice_site_id - practice_site.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_sessions_coach_id_persons {
+	sessions.coach_id > persons.ff2b_id [ delete: set null, update: no action ]
+}
+
+Ref fk_users_statut_users_status {
+	users.statut > users_status.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_payments_history_changed_by_users {
+	payments_history.changed_by > users.id [ delete: set null, update: no action ]
+}
