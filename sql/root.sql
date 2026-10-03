@@ -1196,7 +1196,7 @@ COMMENT ON COLUMN "users_status"."label" IS 'Label unique du statut de l''utilis
 CREATE TABLE IF NOT EXISTS "logs" (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     user_id UUID,
 
@@ -1206,7 +1206,7 @@ CREATE TABLE IF NOT EXISTS "logs" (
 
     old_data JSONB,
 
-    new_data JSONB,
+    new_data JSONB NOT NULL,
 
     CONSTRAINT logs_user_fk
         FOREIGN KEY ("user_id")
