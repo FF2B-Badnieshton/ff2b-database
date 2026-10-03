@@ -130,7 +130,17 @@ CREATE TABLE IF NOT EXISTS "licenses" (
 	"license_status" LICENCE_STATUS NOT NULL,
 	-- ID du document de certificat de la licence
 	"document_id" UUID,
-	PRIMARY KEY("id")
+	PRIMARY KEY("id"),
+
+	CONSTRAINT validation_date_check CHECK (
+    "validation_date" IS NULL
+    OR "validation_date" >= "request_date"
+),
+	CONSTRAINT end_date_check CHECK (
+    "end_date" IS NULL
+    OR "beginning_date" IS NULL
+    OR "end_date" >= "beginning_date"
+)
 );
 
 COMMENT ON COLUMN "licenses"."id" IS 'ID unique de la licence dans l''organisation';
@@ -260,7 +270,11 @@ CREATE TABLE IF NOT EXISTS "practice_site" (
 	-- Date d'ouverture du site de pratique
 	"opening_date" DATE,
 	-- Date de fermeture du site de pratique 
-	"closing_date" DATE,
+	"closing_date" DATE CHECK (
+    closing_date IS NULL
+    OR opening_date IS NULL
+    OR closing_date >= opening_date
+),
 	PRIMARY KEY("id")
 );
 
@@ -283,16 +297,16 @@ CREATE TABLE IF NOT EXISTS "slots" (
 	-- Timestamp de fin de créneau
 	"end_at" TIME NOT NULL,
 	-- Capacité d'effectif
-	"capacity" SMALLINT,
+	"capacity" SMALLINT  CHECK ("capacity" > 0),
 	-- Le jour du créneau (entre 1 et 7)
 	"day_of_week" SMALLINT CHECK(day_of_week BETWEEN 1 AND 7),
-	PRIMARY KEY("id")
-	CONSTRAINTS UNIQUE (
-    'site_id',
-    'season_id',
-    'day_of_week',
-    'start_at',
-    'end_at'
+	PRIMARY KEY("id"),
+	CONSTRAINT slots_unique_0 UNIQUE (
+    "site_id",
+    "season_id",
+    "day_of_week",
+    "start_at",
+    "end_at"
 )
 );
 
@@ -312,7 +326,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 	-- Timestamp de début de séance
 	"start_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Durée de la séance (en minutes)
-	"duration" SMALLINT NOT NULL,
+	"duration" SMALLINT NOT NULL  CHECK (duration > 0),
 	-- ID du référent de la séance
 	"referent_id" INTEGER,
 	-- ID du coach de la séance
@@ -514,11 +528,14 @@ CREATE TABLE IF NOT EXISTS "game_participant" (
 	-- Classement après le match
 	"ranking_after" SMALLINT,
 	-- ELO avant match
-	"elo_before" SMALLINT,
+	"elo_before" SMALLINT CHECK ("elo_before" > 0),
 	-- ELO après match
-	"elo_after" SMALLINT,
+	"elo_after" SMALLINT  CHECK ("elo_after" > 0),
 	-- ID de la personne
 	"person_id" UUID NOT NULL,
+
+	
+
 	PRIMARY KEY("id")
 );
 
@@ -551,11 +568,11 @@ CREATE TABLE IF NOT EXISTS "game_side_result" (
 	-- ID du côté du match
 	"game_side_id" INTEGER NOT NULL UNIQUE,
 	-- La valeur de nieshs marqué
-	"nieshs_scored" SMALLINT NOT NULL,
+	"nieshs_scored" SMALLINT NOT NULL CHECK ("nieshs_scored" >= 0),
 	-- La valeur de nieshs concédé
-	"nieshs_conceded" SMALLINT NOT NULL,
+	"nieshs_conceded" SMALLINT NOT NULL CHECK ("nieshs_conceded" >= 0),
 	-- Le résultat du côté du match
-	"result" SMALLINT NOT NULL,
+	"result" SMALLINT NOT NULL CHECK ("result" >= 0),
 	PRIMARY KEY("id")
 );
 
@@ -602,7 +619,10 @@ CREATE TABLE IF NOT EXISTS "referents" (
 	-- Date de début de rôle de référent
 	"start_date" DATE NOT NULL,
 	-- Date de fin de référent
-	"end_date" DATE,
+	"end_date" DATE CHECK (
+    "end_date" IS NULL
+    OR "end_date" >= "start_date"
+),
 	-- Numéro de téléphone professionnel
 	"professional_phone" TEXT NOT NULL,
 	-- Adresse mail professionnelle du référent
@@ -657,7 +677,10 @@ CREATE TABLE IF NOT EXISTS "volunteers" (
 	-- Début de la période de volontariat
 	"start_date" DATE NOT NULL,
 	-- Fin de la période de volontariat
-	"end_date" DATE,
+	"end_date" DATE CHECK (
+    "end_date" IS NULL
+    OR "end_date" >= "start_date"
+),
 	-- Tâches effectués par le volontaire
 	"tasks" TEXT,
 	PRIMARY KEY("id")
@@ -774,7 +797,7 @@ CREATE TABLE IF NOT EXISTS "contacts" (
 COMMENT ON COLUMN "contacts"."id" IS 'ID unique du contact';
 COMMENT ON COLUMN "contacts"."person_id" IS 'ID de la personne';
 COMMENT ON COLUMN "contacts"."organization_id" IS 'ID de l''organisation';
-COMMENT ON COLUMN "contacts"."date" IS 'Date du contact';
+COMMENT ON COLUMN "contacts"."contact_at" IS 'Date du contact';
 COMMENT ON COLUMN "contacts"."responsible_id" IS 'ID de la personne responsable au sein de l''association';
 COMMENT ON COLUMN "contacts"."subject" IS 'Sujet du contact';
 COMMENT ON COLUMN "contacts"."notes" IS 'Notes de l''interaction';
@@ -783,7 +806,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	-- ID du l'utilisateur sur les plateformes numériques de l'association
 	"id" UUID NOT NULL  DEFAULT gen_random_uuid(),
 	-- UUID de la personne 
-	"person_id" UUID NOT NULL,
+	"person_id" UUID NOT NULL UNIQUE,
 	-- Adresse mail de l'utilisateur sur les plateformes numériques
 	"email" TEXT NOT NULL,
 	-- Mot de passe hashé de l'utilisateur
@@ -1015,7 +1038,10 @@ CREATE TABLE IF NOT EXISTS "projects" (
 	-- Date de début du projet
 	"start_date" DATE NOT NULL,
 	-- Date de fin du projet
-	"end_date" DATE,
+	"end_date" DATE CHECK (
+    "end_date" IS NULL
+    OR "end_date" >= "start_date"
+),
 	PRIMARY KEY("id")
 );
 
@@ -1135,7 +1161,7 @@ CREATE TABLE IF NOT EXISTS "payments" (
 	-- Date de création du paiement
 	"created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- Date de mise à jour du paiement
-	"updated_at" TIMESTAMPTZ NOT NULL,
+	"updated_at" TIMESTAMPTZ,
 	PRIMARY KEY("id")
 );
 
@@ -1206,7 +1232,7 @@ CREATE TABLE IF NOT EXISTS "logs" (
 
     old_data JSONB,
 
-    new_data JSONB NOT NULL,
+    new_data JSONB,
 
     CONSTRAINT logs_user_fk
         FOREIGN KEY ("user_id")
@@ -1487,11 +1513,11 @@ ON UPDATE NO ACTION ON DELETE SET NULL;
 
 -- Index
 
-CREATE INDEX IF NOT EXISTS idx_logs_table_timestamp
-    ON "logs" ("table_name", "timestamp" DESC);
+CREATE INDEX IF NOT EXISTS idx_logs_table_changed_at
+    ON "logs" ("table_name", "changed_at" DESC);
 
-CREATE INDEX IF NOT EXISTS idx_logs_user_timestamp
-    ON "logs" ("user_id", "timestamp" DESC);
+CREATE INDEX IF NOT EXISTS idx_logs_user_changed_at
+    ON "logs" ("user_id", "changed_at" DESC);
 
 CREATE INDEX IF NOT EXISTS idx_logs_action
     ON "logs" ("action");
@@ -1760,10 +1786,10 @@ CREATE INDEX IF NOT EXISTS idx_contacts_responsible_id
     ON contacts (responsible_id);
 
 CREATE INDEX IF NOT EXISTS idx_contacts_date
-    ON contacts (date);
+    ON contacts (contact_at);
 
 CREATE INDEX IF NOT EXISTS idx_contacts_responsible_date
-    ON contacts (responsible_id, date);
+    ON contacts (responsible_id, contact_at);
 
 
 CREATE INDEX IF NOT EXISTS idx_users_person_id
