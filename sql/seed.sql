@@ -111,10 +111,57 @@ INSERT INTO "referent_status" ("id", "code", "label") VALUES
 (2, 'adjoint', 'Adjoint')
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO "equipment_category" ("id", "code", "label", "description") VALUES
+(1, 'raquettes', 'Raquettes', 'Ensemble des raquettes homologuées pour la pratique du Badnieshton.'),
+(2, 'niesh', 'Niesh®', 'L''équipement officiel Niesh® de la FF2B.'),
+(3, 'custom', 'Sur-Mesure', 'Équipement personnalisé ou fabriqué sur-mesure pour les entraînements.')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO "equipment_status" ("id", "code", "label") VALUES
+(1, 'new', 'Neuf'),
+(2, 'good_condition', 'Bon état'),
+(3, 'needs_repair', 'À réparer'),
+(4, 'out_of_service', 'Hors service / Réformé')
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO "organizations_type" ("id", "code", "label") VALUES
 (1, 'club', 'Club affilié'),
 (2, 'sponsor', 'Sponsor / Partenaire'),
 (3, 'institution', 'Institution publique')
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO "person_status" ("id", "code", "label", "description") VALUES
+(1, 'active', 'Actif', 'La personne est actif'),
+(2, 'inactive', 'Inactif', 'La personne est inactif'),
+(3, 'suspended', 'Suspendu', 'La personne à été suspendu'),
+(4, 'deleted', 'Supprimé', 'La personne à été supprimé')
+ON CONFLICT (id) DO NOTHING;
+
 COMMIT;
+--==============================================================================
+-- RECALAGE DES SÉQUENCES D'AUTO-INCRÉMENTATION
+-- (À exécuter après le COMMIT pour synchroniser les compteurs internes)
+-- =============================================================================
+
+SELECT setval(pg_get_serial_sequence('countries', 'id'), COALESCE(MAX(id), 1)) FROM "countries";
+SELECT setval(pg_get_serial_sequence('regions', 'id'), COALESCE(MAX(id), 1)) FROM "regions";
+SELECT setval(pg_get_serial_sequence('departments', 'id'), COALESCE(MAX(id), 1)) FROM "departments";
+SELECT setval(pg_get_serial_sequence('municipalities', 'id'), COALESCE(MAX(id), 1)) FROM "municipalities";
+SELECT setval(pg_get_serial_sequence('license_type', 'id'), COALESCE(MAX(id), 1)) FROM "license_type";
+SELECT setval(pg_get_serial_sequence('roles', 'id'), COALESCE(MAX(id), 1)) FROM "roles";
+SELECT setval(pg_get_serial_sequence('access_roles', 'id'), COALESCE(MAX(id), 1)) FROM "access_roles";
+SELECT setval(pg_get_serial_sequence('users_status', 'id'), COALESCE(MAX(id), 1)) FROM "users_status";
+SELECT setval(pg_get_serial_sequence('document_type', 'id'), COALESCE(MAX(id), 1)) FROM "document_type";
+SELECT setval(pg_get_serial_sequence('consents_type', 'id'), COALESCE(MAX(id), 1)) FROM "consents_type";
+SELECT setval(pg_get_serial_sequence('seasons', 'id'), COALESCE(MAX(id), 1)) FROM "seasons";
+SELECT setval(pg_get_serial_sequence('competition_format', 'id'), COALESCE(MAX(id), 1)) FROM "competition_format";
+SELECT setval(pg_get_serial_sequence('competition_status', 'id'), COALESCE(MAX(id), 1)) FROM "competition_status";
+SELECT setval(pg_get_serial_sequence('competition_participant_status', 'id'), COALESCE(MAX(id), 1)) FROM "competition_participant_status";
+SELECT setval(pg_get_serial_sequence('competition_participant_category', 'id'), COALESCE(MAX(id), 1)) FROM "competition_participant_category";
+SELECT setval(pg_get_serial_sequence('game_format', 'id'), COALESCE(MAX(id), 1)) FROM "game_format";
+SELECT setval(pg_get_serial_sequence('projects_status', 'id'), COALESCE(MAX(id), 1)) FROM "projects_status";
+SELECT setval(pg_get_serial_sequence('project_members_role', 'id'), COALESCE(MAX(id), 1)) FROM "project_members_role";
+SELECT setval(pg_get_serial_sequence('referent_status', 'id'), COALESCE(MAX(id), 1)) FROM "referent_status";
+SELECT setval(pg_get_serial_sequence('equipment_category', 'id'), COALESCE(MAX(id), 1)) FROM "equipment_category";
+SELECT setval(pg_get_serial_sequence('equipment_status', 'id'), COALESCE(MAX(id), 1)) FROM "equipment_status";
+SELECT setval(pg_get_serial_sequence('organizations_type', 'id'), COALESCE(MAX(id), 1)) FROM "organizations_type";
