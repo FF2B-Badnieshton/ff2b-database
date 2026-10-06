@@ -328,16 +328,16 @@ CREATE TABLE IF NOT EXISTS "equipments" (
 	PRIMARY KEY("id")
 );
 
-COMMENT ON "equipments"."id" IS 'ID unique de l\'équipement';
-COMMENT ON "equipments"."practice_site_id" IS 'Id du site de pratique auquel est rattaché l\'équipement';
-COMMENT ON "equipments"."name" IS 'Nom de l\'équipement';
-COMMENT ON "equipments"."description" IS 'Description de l\'équipement';
-COMMENT ON "equipments"."category_id" IS 'ID du type d\'équipement';
-COMMENT ON "equipments"."status_id" IS 'ID du statut de l\'équipement';
-COMMENT ON "equipments"."quantity" IS 'Quantité de l\'équipement (Default 1)';
-COMMENT ON "equipments"."purchase_date" IS 'Date d\'achat de l\'équipement';
-COMMENT ON "equipments"."purchase_price" IS 'Prix d\'achat de l\'équipement';
-COMMENT ON "equipments"."notes" IS 'Note de l\'équipement';
+COMMENT ON COLUMN "equipments"."id" IS 'ID unique de l''équipement';
+COMMENT ON COLUMN "equipments"."practice_site_id" IS 'ID du site de pratique auquel est rattaché l''équipement';
+COMMENT ON COLUMN "equipments"."name" IS 'Nom de l''équipement';
+COMMENT ON COLUMN "equipments"."description" IS 'Description de l''équipement';
+COMMENT ON COLUMN "equipments"."category_id" IS 'ID du type d''équipement';
+COMMENT ON COLUMN "equipments"."status_id" IS 'ID du statut de l''équipement';
+COMMENT ON COLUMN "equipments"."quantity" IS 'Quantité de l''équipement (Default 1)';
+COMMENT ON COLUMN "equipments"."purchase_date" IS 'Date d''achat de l''équipement';
+COMMENT ON COLUMN "equipments"."purchase_price" IS 'Prix d''achat de l''équipement';
+COMMENT ON COLUMN "equipments"."notes" IS 'Note de l''équipement';
 
 
 CREATE TABLE IF NOT EXISTS "equipment_category" (
@@ -353,10 +353,10 @@ CREATE TABLE IF NOT EXISTS "equipment_category" (
     PRIMARY KEY("id")
 );
 
-COMMENT ON "equipment_category"."id" IS 'ID unique de la catégorie de l\'équipement';
-COMMENT ON "equipment_category"."code" IS 'code unique de la catégorie de l\'équipement';
-COMMENT ON "equipment_category"."label" IS 'label unique de la catégorie de l\'équipement';
-COMMENT ON "equipment_category"."description" IS 'Description de la catégorie de l\'équipement';
+COMMENT ON COLUMN "equipment_category"."id" IS 'ID unique de la catégorie de l''équipement';
+COMMENT ON COLUMN "equipment_category"."code" IS 'code unique de la catégorie de l''équipement';
+COMMENT ON COLUMN "equipment_category"."label" IS 'label unique de la catégorie de l''équipement';
+COMMENT ON COLUMN "equipment_category"."description" IS 'Description de la catégorie de l''équipement';
 
 CREATE TABLE IF NOT EXISTS "equipment_status" (
 
@@ -369,9 +369,9 @@ CREATE TABLE IF NOT EXISTS "equipment_status" (
     PRIMARY KEY("id")
 );
 
-COMMENT ON "equipment_status"."id" IS 'ID unique du statut de l\'équipement';
-COMMENT ON "equipment_status"."code" IS 'Code unique du statut de l\'équipement';
-COMMENT ON "equipment_status"."label" IS 'Label affiché du statut de l\'équipement';
+COMMENT ON COLUMN "equipment_status"."id" IS 'ID unique du statut de l''équipement';
+COMMENT ON COLUMN"equipment_status"."code" IS 'Code unique du statut de l''équipement';
+COMMENT ON COLUMN"equipment_status"."label" IS 'Label affiché du statut de l''équipement';
 
 CREATE TABLE IF NOT EXISTS "slots" (
 	-- ID du créneau
@@ -1468,7 +1468,8 @@ ON UPDATE NO ACTION ON DELETE CASCADE;
 ALTER TABLE "persons"
 ADD FOREIGN KEY("municipality_id") REFERENCES "municipalities"("id")
 ON UPDATE NO ACTION ON DELETE SET NULL;
-ADD FOREIGN KEY("status") REFERENCES "persons_status"("id")
+ALTER TABLE "persons"
+ADD FOREIGN KEY("status") REFERENCES "person_status"("id")
 ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "person_role"
 ADD FOREIGN KEY("role_id") REFERENCES "roles"("id")
