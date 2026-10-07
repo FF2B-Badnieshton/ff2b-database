@@ -1,0 +1,108 @@
+name: Generate database documentation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-docs:
+    name: Generate SchemaSpy documentation
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: ff2b
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d ff2b"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install Sqitch
+        run: |
+          sudo apt-get install -y sqitch libdbd-pg-perl
+
+      - name: Wait for PostgreSQL
+        env:
+          PGPASSWORD: postgres
+        run: |
+          until pg_isready \
+            -h localhost \
+            -p 5432 \
+            -U postgres \
+            -d ff2b
+          do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Deploy database with Sqitch
+        env:
+          PGPASSWORD: postgres
+        run: |
+          sqitch deploy \
+            db:pg://postgres:postgres@localhost:5432/ff2b \
+            || {
+              code=$?
+              if [ "$code" -eq 2 ]; then
+                echo "Sqitch plan is empty, continuing for documentation test."
+              else
+                exit "$code"
+              fi
+            }
+
+      - name: Create documentation directory
+        run: |
+          rm -rf docs/
+          mkdir -p docs/
+
+      - name: Generate SchemaSpy documentation
+        run: |
+          docker run --rm \
+            --network host \
+            -v "${{ github.workspace }}/docs/database:/output" \
+            schemaspy/schemaspy:latest \
+            -t pgsql \
+            -host localhost \
+            -port 5432 \
+            -db ff2b \
+            -u postgres \
+            -p postgres \
+            -schemas public \
+
+      - name: Check generated documentation
+        run: |
+          test -f docs/index.html
+
+      - name: Commit documentation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/database
+
+          if git diff --cached --quiet; then
+            echo "No documentation changes."
+            exit 0
+          fi
+
+          git commit -m "docs: update database documentation"
+          git push
