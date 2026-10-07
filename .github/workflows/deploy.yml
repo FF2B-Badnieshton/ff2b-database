@@ -3,6 +3,16 @@ name: FF2B Database
 on:
   workflow_dispatch:
 
+  push:
+    branches:
+      - main
+    paths:
+      - "deploy/**"
+      - "revert/**"
+      - "verify/**"
+      - "sqitch.conf"
+      - "sqitch.plan"
+
 permissions:
   contents: read
 
@@ -95,24 +105,31 @@ jobs:
           PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
           PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
           PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
-          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
 
         run: |
           sqitch config --local target.prod.uri \
-            "db:pg://${PROD_DB_USER}:${PROD_DB_PASSWORD}@${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}"
+            "db:pg://${PROD_DB_USER}@${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}"
 
       - name: Check production status
+        env:
+          PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
           sqitch status prod
 
       - name: Deploy migrations
+        env:
+          PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
           sqitch deploy prod
 
       - name: Verify production database
+        env:
+          PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
           sqitch verify prod
 
       - name: Check final status
+        env:
+          PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
           sqitch status prod

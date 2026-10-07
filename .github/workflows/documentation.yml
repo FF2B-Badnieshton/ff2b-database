@@ -3,6 +3,16 @@ name: Generate database documentation
 on:
   workflow_dispatch:
 
+  push:
+    branches:
+      - main
+    paths:
+      - 'deploy/**'
+      - 'revert/**'
+      - 'verify/**'
+      - 'sqitch.conf'
+      - 'sqitch.plan'
+
 permissions:
   contents: write
 
@@ -58,20 +68,12 @@ jobs:
           PGPASSWORD: postgres
         run: |
           sqitch deploy \
-            db:pg://postgres:postgres@localhost:5432/ff2b \
-            || {
-              code=$?
-              if [ "$code" -eq 2 ]; then
-                echo "Sqitch plan is empty, continuing for documentation test."
-              else
-                exit "$code"
-              fi
-            }
+            db:pg://postgres:postgres@localhost:5432/ff2b
 
       - name: Create documentation directory
         run: |
-          rm -rf docs/
-          mkdir -p docs/
+          rm -rf docs/database
+          mkdir -p docs/database
 
       - name: Generate SchemaSpy documentation
         run: |
@@ -89,7 +91,7 @@ jobs:
 
       - name: Check generated documentation
         run: |
-          test -f docs/index.html
+          test -f docs/database/index.html
 
       - name: Commit documentation
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
