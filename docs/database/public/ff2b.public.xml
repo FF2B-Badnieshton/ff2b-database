@@ -1,0 +1,1644 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="ff2b" schema="public" type="PostgreSQL - 18.6 (Debian 18.6-1.pgdg13+2)">
+   <tables>
+      <table name="access_roles" remarks="Stores access roles records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="role_id" foreignKey="users_roles_role_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="users_roles"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="access_roles_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="access_roles_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="access_roles_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="commissions" remarks="Stores commissions records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="commission_id" foreignKey="commissions_members_commission_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="commissions_members"/>
+            <child column="commission_id" foreignKey="documents_commissions_commission_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_commissions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="president_id" nullable="false" remarks="Identifier of the commission president." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="commissions_president_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="creation_date" nullable="false" remarks="Record creation timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="commissions_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="commissions_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="idx_commissions_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="idx_commissions_president_id" unique="false">
+            <column ascending="true" name="president_id"/>
+         </index>
+      </table>
+      <table name="commissions_members" remarks="Stores commissions members records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="commission_id" nullable="false" remarks="Identifier of the associated commission." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="commissions_members_commission_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="commissions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="commissions_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="joined_at" nullable="false" remarks="Date when the member joined." size="13" type="date" typeCode="91"/>
+         <primaryKey column="commission_id" sequenceNumberInPK="1"/>
+         <primaryKey column="person_id" sequenceNumberInPK="2"/>
+         <index name="commissions_members_pkey" unique="true">
+            <column ascending="true" name="commission_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_commissions_members_commission_id" unique="false">
+            <column ascending="true" name="commission_id"/>
+         </index>
+         <index name="idx_commissions_members_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+      </table>
+      <table name="competition_formats" remarks="Stores competition format records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="format_id" foreignKey="competitions_format_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competition_formats_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="competition_formats_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="competition_formats_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="competition_participant" remarks="Stores competition participant records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="competition_id" nullable="false" remarks="Identifier of the associated competition." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competition_participant_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="competitions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="person_id" foreignKey="fk_competition_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+            <parent column="ff2b_id" foreignKey="competition_participant_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="status" nullable="false" remarks="Status." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competition_participant_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_participant_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="category" nullable="false" remarks="category." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competition_participant_category_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_participant_category"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="license_id" nullable="false" remarks="Identifier of the associated license." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fk_competition_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="ranking_before" nullable="true" remarks="Ranking before the event." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="ranking_after" nullable="true" remarks="Ranking after the event." size="5" type="int2" typeCode="5"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competition_participant_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_competition_participant_category" unique="false">
+            <column ascending="true" name="category"/>
+         </index>
+         <index name="idx_competition_participant_competition_person" unique="false">
+            <column ascending="true" name="competition_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_competition_participant_license_id" unique="false">
+            <column ascending="true" name="license_id"/>
+         </index>
+         <index name="idx_competition_participant_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_competition_participant_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+      </table>
+      <table name="competition_participant_category" remarks="Stores competition participant category records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="category" foreignKey="competition_participant_category_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_participant"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competition_participant_category_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="competition_participant_category_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="competition_participant_category_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="competition_participant_status" remarks="Stores competition participant status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="status" foreignKey="competition_participant_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_participant"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competition_participant_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="competition_participant_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="competition_participant_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="competition_status" remarks="Stores competition status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="status" foreignKey="competitions_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competition_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="competition_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="competition_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="competitions" remarks="Stores competitions records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="competition_id" foreignKey="competition_participant_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="competition_participant"/>
+            <child column="competition_id" foreignKey="documents_competitions_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_competitions"/>
+            <child column="competition_id" foreignKey="games_competition_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="games"/>
+            <child column="competition_id" foreignKey="teams_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="teams"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="season_id" nullable="false" remarks="Identifier of the associated season." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competitions_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="seasons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="date" nullable="false" remarks="Event date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="location_id" nullable="false" remarks="Identifier of the location." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competitions_location_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="practice_site_id" nullable="false" remarks="Identifier of the associated practice site." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competitions_practice_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="practice_sites"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="organizer_id" nullable="false" remarks="Identifier of the organizer." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="competitions_organizer_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="format_id" nullable="false" remarks="Identifier of the associated format." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="competitions_format_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_formats"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="status" nullable="true" remarks="Status." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="competitions_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="rules_document_id" nullable="true" remarks="Identifier of the rules document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="competitions_rules_document_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="documents"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="competitions_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_competitions_date" unique="false">
+            <column ascending="true" name="date"/>
+         </index>
+         <index name="idx_competitions_format_id" unique="false">
+            <column ascending="true" name="format_id"/>
+         </index>
+         <index name="idx_competitions_location_id" unique="false">
+            <column ascending="true" name="location_id"/>
+         </index>
+         <index name="idx_competitions_organizer_id" unique="false">
+            <column ascending="true" name="organizer_id"/>
+         </index>
+         <index name="idx_competitions_practice_site_id" unique="false">
+            <column ascending="true" name="practice_site_id"/>
+         </index>
+         <index name="idx_competitions_rules_document_id" unique="false">
+            <column ascending="true" name="rules_document_id"/>
+         </index>
+         <index name="idx_competitions_season_date" unique="false">
+            <column ascending="true" name="season_id"/>
+            <column ascending="true" name="date"/>
+         </index>
+         <index name="idx_competitions_season_id" unique="false">
+            <column ascending="true" name="season_id"/>
+         </index>
+         <index name="idx_competitions_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+      </table>
+      <table name="consents" remarks="Stores consents records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="consents_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="consent_type_id" nullable="false" remarks="Identifier of the consent type." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="consents_consent_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="consents_type"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="3" name="given_at" nullable="false" remarks="Date and time consent was given." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="is_accepted" nullable="false" remarks="Whether consent was accepted." size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="consents_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_consents_consent_type_id" unique="false">
+            <column ascending="true" name="consent_type_id"/>
+         </index>
+         <index name="idx_consents_given_at" unique="false">
+            <column ascending="true" name="given_at"/>
+         </index>
+         <index name="idx_consents_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_consents_person_type" unique="false">
+            <column ascending="true" name="person_id"/>
+            <column ascending="true" name="consent_type_id"/>
+         </index>
+      </table>
+      <table name="consents_type" remarks="Stores consents type records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="consent_type_id" foreignKey="consents_consent_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="consents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="is_mandatory" nullable="false" remarks="Whether consent is mandatory for registration." size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="consents_type_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="consents_type_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+      <table name="contacts" remarks="Stores contacts records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="true" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="contacts_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="organization_id" nullable="true" remarks="Identifier of the associated organization." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="contacts_organization_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organizations"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="contact_at" nullable="true" remarks="Contact timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="responsible_id" nullable="false" remarks="Identifier of the responsible person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="contacts_responsible_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="subject" nullable="true" remarks="Contact subject." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="notes" nullable="true" remarks="Additional notes." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="contacts_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_contacts_date" unique="false">
+            <column ascending="true" name="contact_at"/>
+         </index>
+         <index name="idx_contacts_organization_id" unique="false">
+            <column ascending="true" name="organization_id"/>
+         </index>
+         <index name="idx_contacts_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_contacts_responsible_date" unique="false">
+            <column ascending="true" name="responsible_id"/>
+            <column ascending="true" name="contact_at"/>
+         </index>
+      </table>
+      <table name="countries" remarks="Stores countries records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="country_id" foreignKey="regions_country_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="regions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="countries_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_countries_code" unique="false">
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+      <table name="departments" remarks="Stores departments records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="departement_id" foreignKey="municipalities_departement_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="region_id" nullable="false" remarks="Identifier of the associated region." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="departments_region_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="regions"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="departments_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_departments_code" unique="false">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="idx_departments_region_id" unique="false">
+            <column ascending="true" name="region_id"/>
+         </index>
+      </table>
+      <table name="development_status" remarks="Stores the development status of a record" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record" size="5" type="int2" typeCode="5">
+            <child column="development_status" foreignKey="municipalities_development_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code for the development status" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Unique label for the development status displayed in the app" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description of the development status" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="development_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="development_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="development_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="document_types" remarks="Stores document type records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="document_type_id" foreignKey="documents_document_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="document_code" nullable="false" remarks="document code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="document_label" nullable="false" remarks="document label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="document_types_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="document_types_document_code_key" unique="true">
+            <column ascending="true" name="document_code"/>
+         </index>
+      </table>
+      <table name="documents" remarks="Stores documents records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="2147483647" type="uuid" typeCode="1111">
+            <child column="rules_document_id" foreignKey="competitions_rules_document_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+            <child column="document_id" foreignKey="documents_commissions_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_commissions"/>
+            <child column="document_id" foreignKey="documents_competitions_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_competitions"/>
+            <child column="document_id" foreignKey="documents_licenses_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_licenses"/>
+            <child column="document_id" foreignKey="documents_organizations_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_organizations"/>
+            <child column="document_id" foreignKey="documents_persons_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_persons"/>
+            <child column="document_id" foreignKey="documents_practices_sites_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_practices_sites"/>
+            <child column="document_id" foreignKey="documents_projects_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_projects"/>
+            <child column="document_id" foreignKey="licenses_document_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+            <child column="invoice_document" foreignKey="payments_invoice_document_fkey" implied="false" onDeleteCascade="false" schema="public" table="payments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="filename" nullable="false" remarks="File name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="storage_path" nullable="false" remarks="Storage path." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="document_type_id" nullable="false" remarks="Identifier of the document type." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="documents_document_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="document_types"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="4" name="creation_date" nullable="false" remarks="Record creation timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="mime_type" nullable="true" remarks="Document media type." size="40" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="file_size" nullable="false" remarks="File size in bytes." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="hash" nullable="false" remarks="File content hash." size="64" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="uploaded_by" nullable="true" remarks="Identifier of the person who uploaded the file." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_uploaded_by_fkey" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="9" name="expires_at" nullable="true" remarks="Document expiration timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="documents_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_documents_creation_date" unique="false">
+            <column ascending="true" name="creation_date"/>
+         </index>
+         <index name="idx_documents_document_type_id" unique="false">
+            <column ascending="true" name="document_type_id"/>
+         </index>
+         <index name="idx_documents_expires_at" unique="false">
+            <column ascending="true" name="expires_at"/>
+         </index>
+         <index name="idx_documents_hash" unique="false">
+            <column ascending="true" name="hash"/>
+         </index>
+         <index name="idx_documents_uploaded_by" unique="false">
+            <column ascending="true" name="uploaded_by"/>
+         </index>
+         <checkConstraint constraint="((hash)::text ~ '^[0-9a-fA-F]{64}$'::text)" name="documents_hash_check"/>
+         <checkConstraint constraint="(file_size &gt;= 0)" name="file_size_check"/>
+      </table>
+      <table name="documents_commissions" remarks="Stores documents commissions records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_commissions_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="commission_id" nullable="false" remarks="Identifier of the associated commission." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="documents_commissions_commission_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="commissions"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="commission_id" sequenceNumberInPK="2"/>
+         <index name="documents_commissions_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="commission_id"/>
+         </index>
+         <index name="idx_documents_commissions_commission_id" unique="false">
+            <column ascending="true" name="commission_id"/>
+         </index>
+         <index name="idx_documents_commissions_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+      </table>
+      <table name="documents_competitions" remarks="Stores documents competitions records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_competitions_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="competition_id" nullable="false" remarks="Identifier of the associated competition." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="documents_competitions_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="competitions"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="competition_id" sequenceNumberInPK="2"/>
+         <index name="documents_competitions_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="competition_id"/>
+         </index>
+         <index name="idx_documents_competitions_competition_id" unique="false">
+            <column ascending="true" name="competition_id"/>
+         </index>
+         <index name="idx_documents_competitions_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+      </table>
+      <table name="documents_licenses" remarks="Stores documents licenses records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_licenses_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="license_id" nullable="false" remarks="Identifier of the associated license." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_licenses_license_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="licenses"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="license_id" sequenceNumberInPK="2"/>
+         <index name="documents_licenses_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="license_id"/>
+         </index>
+         <index name="idx_documents_licenses_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_documents_licenses_license_id" unique="false">
+            <column ascending="true" name="license_id"/>
+         </index>
+      </table>
+      <table name="documents_organizations" remarks="Stores documents organizations records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_organizations_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="organization_id" nullable="false" remarks="Identifier of the associated organization." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="documents_organizations_organization_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="organizations"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="organization_id" sequenceNumberInPK="2"/>
+         <index name="documents_organizations_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="organization_id"/>
+         </index>
+         <index name="idx_documents_organizations_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_documents_organizations_organization_id" unique="false">
+            <column ascending="true" name="organization_id"/>
+         </index>
+      </table>
+      <table name="documents_persons" remarks="Stores documents persons records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_persons_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="documents_persons_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="person_id" sequenceNumberInPK="2"/>
+         <index name="documents_persons_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_documents_persons_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_documents_persons_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+      </table>
+      <table name="documents_practices_sites" remarks="Stores documents practices sites records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_practices_sites_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="practice_site_id" nullable="false" remarks="Identifier of the associated practice site." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="documents_practices_sites_practice_site_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="practice_sites"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="practice_site_id" sequenceNumberInPK="2"/>
+         <index name="documents_practices_sites_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="practice_site_id"/>
+         </index>
+         <index name="idx_documents_practices_sites_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_documents_practices_sites_practice_site_id" unique="false">
+            <column ascending="true" name="practice_site_id"/>
+         </index>
+      </table>
+      <table name="documents_projects" remarks="Stores documents projects records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="document_id" nullable="false" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="documents_projects_document_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="project_id" nullable="false" remarks="Identifier of the associated project." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="documents_projects_project_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="projects"/>
+         </column>
+         <primaryKey column="document_id" sequenceNumberInPK="1"/>
+         <primaryKey column="project_id" sequenceNumberInPK="2"/>
+         <index name="documents_projects_pkey" unique="true">
+            <column ascending="true" name="document_id"/>
+            <column ascending="true" name="project_id"/>
+         </index>
+         <index name="idx_documents_projects_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_documents_projects_project_id" unique="false">
+            <column ascending="true" name="project_id"/>
+         </index>
+      </table>
+      <table name="equipment_categories" remarks="Stores equipment category records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="category_id" foreignKey="equipments_category_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="equipments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="equipment_categories_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="equipment_categories_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="equipment_categories_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="equipment_status" remarks="Stores equipment status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="status_id" foreignKey="equipments_status_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="equipments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code of the equipment status." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label of the equipment status." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="equipment_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="equipment_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="equipment_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="equipments" remarks="Stores equipments records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="practice_site_id" nullable="true" remarks="Identifier of the associated practice site." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="equipments_practice_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="practice_sites"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="category_id" nullable="false" remarks="Identifier of the equipment category." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="equipments_category_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="equipment_categories"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="status_id" nullable="false" remarks="Identifier of the equipment status." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="equipments_status_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="equipment_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="1" digits="0" id="6" name="quantity" nullable="false" remarks="Equipment quantity; defaults to 1." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="purchase_date" nullable="true" remarks="Purchase date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="8" name="purchase_price" nullable="true" remarks="Purchase price." size="8" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="notes" nullable="true" remarks="Additional notes." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="equipments_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_equipment_category_id" unique="false">
+            <column ascending="true" name="category_id"/>
+         </index>
+         <index name="idx_equipment_site_id" unique="false">
+            <column ascending="true" name="practice_site_id"/>
+         </index>
+         <index name="idx_equipment_status_id" unique="false">
+            <column ascending="true" name="status_id"/>
+         </index>
+         <checkConstraint constraint="(purchase_price &gt;= (0)::numeric)" name="equipments_purchase_price_check"/>
+         <checkConstraint constraint="(quantity &gt;= 0)" name="equipments_quantity_check"/>
+      </table>
+      <table name="game_format" remarks="Stores game format records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="format_id" foreignKey="games_format_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="games"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="game_format_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="game_format_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="game_format_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="game_participant" remarks="Stores game participant records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="game_side_id" nullable="false" remarks="Identifier of the associated game side." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="game_participant_game_side_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="game_side"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="ranking_before" nullable="false" remarks="Ranking before the event." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="ranking_after" nullable="true" remarks="Ranking after the event." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="elo_before" nullable="true" remarks="ELO rating before the game." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="elo_after" nullable="true" remarks="ELO rating after the game." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="game_participant_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="game_participant_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="game_participant_side_person_unique" unique="true">
+            <column ascending="true" name="game_side_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_game_participant_game_side_id" unique="false">
+            <column ascending="true" name="game_side_id"/>
+         </index>
+         <index name="idx_game_participant_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <checkConstraint constraint="(elo_after &gt; 0)" name="game_participant_elo_after_check"/>
+         <checkConstraint constraint="(elo_before &gt; 0)" name="game_participant_elo_before_check"/>
+         <checkConstraint constraint="((ranking_after IS NULL) OR (ranking_after &gt;= 0))" name="game_participant_ranking_after_check"/>
+         <checkConstraint constraint="(ranking_before &gt;= 0)" name="game_participant_ranking_before_check"/>
+      </table>
+      <table name="game_side" remarks="Stores game side records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="game_side_id" foreignKey="game_participant_game_side_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="game_participant"/>
+            <child column="game_side_id" foreignKey="game_side_result_game_side_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="game_side_result"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="game_id" nullable="false" remarks="Identifier of the associated game." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="game_side_game_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="games"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="side_number" nullable="false" remarks="Game side number, either 1 or 2." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="person_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="game_side_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="team_id" nullable="true" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="game_side_team_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="teams"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="game_side_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="game_side_unique_0" unique="true">
+            <column ascending="true" name="game_id"/>
+            <column ascending="true" name="side_number"/>
+         </index>
+         <checkConstraint constraint="(((person_id IS NOT NULL) AND (team_id IS NULL)) OR ((person_id IS NULL) AND (team_id IS NOT NULL)))" name="game_side_participant_check"/>
+         <checkConstraint constraint="(side_number = ANY (ARRAY[1, 2]))" name="game_side_side_number_check"/>
+      </table>
+      <table name="game_side_result" remarks="Stores game side result records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="game_side_id" nullable="false" remarks="Identifier of the associated game side." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="game_side_result_game_side_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="game_side"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="nieshs_scored" nullable="false" remarks="Number of nieshs scored." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="nieshs_conceded" nullable="false" remarks="Number of nieshs conceded." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="0A434153450A202020205748454E20286E69657368735F73636F726564203E206E69657368735F636F6E636564656429205448454E20310A202020205748454E20286E69657368735F73636F726564203D206E69657368735F636F6E636564656429205448454E20320A20202020454C534520330A454E44" defaultValueIsBinary="true" digits="0" id="4" name="result" nullable="true" remarks="Generated result: 1 = win, 2 = draw, 3 = loss." size="5" type="int2" typeCode="5"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="game_side_result_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="game_side_result_game_side_id_key" unique="true">
+            <column ascending="true" name="game_side_id"/>
+         </index>
+         <checkConstraint constraint="(nieshs_conceded &gt;= 0)" name="game_side_result_nieshs_conceded_check"/>
+         <checkConstraint constraint="(nieshs_scored &gt;= 0)" name="game_side_result_nieshs_scored_check"/>
+      </table>
+      <table name="games" remarks="Stores games records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="game_id" foreignKey="game_side_game_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="game_side"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="competition_id" nullable="true" remarks="Identifier of the associated competition." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="games_competition_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="format_id" nullable="false" remarks="Identifier of the associated format." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="games_format_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="game_format"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="date" nullable="false" remarks="Event date." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="'planned'::game_status" digits="0" id="4" name="status" nullable="false" remarks="Current lifecycle status of the game." size="2147483647" type="game_status" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="games_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_games_competition_date" unique="false">
+            <column ascending="true" name="competition_id"/>
+            <column ascending="true" name="date"/>
+         </index>
+         <index name="idx_games_competition_id" unique="false">
+            <column ascending="true" name="competition_id"/>
+         </index>
+         <index name="idx_games_date" unique="false">
+            <column ascending="true" name="date"/>
+         </index>
+         <index name="idx_games_format_id" unique="false">
+            <column ascending="true" name="format_id"/>
+         </index>
+         <index name="idx_games_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+      </table>
+      <table name="license_types" remarks="Stores license type records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="license_type" foreignKey="licenses_license_type_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="license_code" nullable="false" remarks="license code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="license_label" nullable="false" remarks="license label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="license_types_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="license_types_license_code_key" unique="true">
+            <column ascending="true" name="license_code"/>
+         </index>
+         <index name="license_types_license_label_key" unique="true">
+            <column ascending="true" name="license_label"/>
+         </index>
+      </table>
+      <table name="licenses" remarks="Stores licenses records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="2147483647" type="uuid" typeCode="1111">
+            <child column="license_id" foreignKey="fk_competition_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="competition_participant"/>
+            <child column="license_id" foreignKey="documents_licenses_license_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_licenses"/>
+            <child column="license_id" foreignKey="payments_license_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="payments"/>
+            <child column="license_id" foreignKey="session_participants_license_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="session_participants"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="license_type" nullable="false" remarks="Identifier of the license type." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="licenses_license_type_fkey" implied="false" onDeleteCascade="false" schema="public" table="license_types"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <child column="person_id" foreignKey="fk_competition_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="competition_participant"/>
+            <child column="person_id" foreignKey="fk_session_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="session_participants"/>
+            <parent column="ff2b_id" foreignKey="licenses_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="season_id" nullable="false" remarks="Identifier of the associated season." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="licenses_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="seasons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="request_date" nullable="false" remarks="License request date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="validation_date" nullable="true" remarks="License validation date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="beginning_date" nullable="true" remarks="License start date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="end_date" nullable="true" remarks="End date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="license_status" nullable="false" remarks="License status." size="2147483647" type="licence_status" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="document_id" nullable="true" remarks="Identifier of the associated document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="licenses_document_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="documents"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="licenses_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_licenses_document_id" unique="false">
+            <column ascending="true" name="document_id"/>
+         </index>
+         <index name="idx_licenses_end_date" unique="false">
+            <column ascending="true" name="end_date"/>
+         </index>
+         <index name="idx_licenses_license_status" unique="false">
+            <column ascending="true" name="license_status"/>
+         </index>
+         <index name="idx_licenses_license_type" unique="false">
+            <column ascending="true" name="license_type"/>
+         </index>
+         <index name="idx_licenses_person_season" unique="false">
+            <column ascending="true" name="person_id"/>
+            <column ascending="true" name="season_id"/>
+         </index>
+         <index name="idx_licenses_request_date" unique="false">
+            <column ascending="true" name="request_date"/>
+         </index>
+         <index name="idx_licenses_season" unique="false">
+            <column ascending="true" name="season_id"/>
+         </index>
+         <index name="uq_licenses_id_person" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <checkConstraint constraint="((end_date IS NULL) OR (beginning_date IS NULL) OR (end_date &gt;= beginning_date))" name="end_date_check"/>
+         <checkConstraint constraint="((validation_date IS NULL) OR (validation_date &gt;= request_date))" name="validation_date_check"/>
+      </table>
+      <table name="logs" remarks="Stores logs records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="1" name="changed_at" nullable="false" remarks="" size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="user_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="logs_user_fk" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="action" nullable="false" remarks="" size="30" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="schema_name" nullable="false" remarks="" size="63" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="table_name" nullable="false" remarks="" size="63" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="metadata" nullable="true" remarks="" size="2147483647" type="jsonb" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="ip_address" nullable="true" remarks="" size="2147483647" type="inet" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="user_agent" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="logs_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_logs_action" unique="false">
+            <column ascending="true" name="action"/>
+         </index>
+         <index name="idx_logs_table_changed_at" unique="false">
+            <column ascending="true" name="table_name"/>
+            <column ascending="false" name="changed_at"/>
+         </index>
+         <index name="idx_logs_user_changed_at" unique="false">
+            <column ascending="true" name="user_id"/>
+            <column ascending="false" name="changed_at"/>
+         </index>
+         <checkConstraint constraint="((action)::text = ANY ((ARRAY['INSERT'::character varying, 'UPDATE'::character varying, 'DELETE'::character varying, 'LOGIN'::character varying, 'LOGOUT'::character varying, 'READ'::character varying, 'EXPORT'::character varying])::text[]))" name="logs_action_check"/>
+      </table>
+      <table name="municipalities" remarks="Stores municipalities records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="location_id" foreignKey="competitions_location_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+            <child column="municipality_id" foreignKey="organizations_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organizations"/>
+            <child column="municipality_id" foreignKey="persons_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+            <child column="municipality_id" foreignKey="practice_sites_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="practice_sites"/>
+            <child column="location" foreignKey="volunteers_location_fkey" implied="false" onDeleteCascade="false" schema="public" table="volunteers"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="zip_code" nullable="false" remarks="Postal code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="insee_code" nullable="true" remarks="INSEE municipality code." size="10" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="departement_id" nullable="false" remarks="Identifier of the associated department." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="municipalities_departement_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="departments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="development_status" nullable="true" remarks="Municipality development status." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="municipalities_development_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="development_status"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="municipalities_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_municipalities_department_id" unique="false">
+            <column ascending="true" name="departement_id"/>
+         </index>
+         <index name="idx_municipalities_insee_code" unique="false">
+            <column ascending="true" name="insee_code"/>
+         </index>
+         <index name="idx_municipalities_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="organization_types" remarks="Stores organizations type records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="organization_type_id" foreignKey="organizations_organization_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organizations"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="organization_types_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="organizations" remarks="Stores organizations records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="organization_id" foreignKey="contacts_organization_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="contacts"/>
+            <child column="organization_id" foreignKey="documents_organizations_organization_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_organizations"/>
+            <child column="organization_id" foreignKey="organizations_contact_organization_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="organizations_contact"/>
+            <child column="organization_id" foreignKey="prospects_organization_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="prospects"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="organization_type_id" nullable="false" remarks="Identifier of the organization type." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="organizations_organization_type_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organization_types"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="municipality_id" nullable="true" remarks="Identifier of the associated municipality." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="organizations_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="organizations_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_organizations_municipality_id" unique="false">
+            <column ascending="true" name="municipality_id"/>
+         </index>
+         <index name="idx_organizations_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <index name="idx_organizations_organization_type_id" unique="false">
+            <column ascending="true" name="organization_type_id"/>
+         </index>
+      </table>
+      <table name="organizations_contact" remarks="Stores organizations contact records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="organization_id" nullable="false" remarks="Identifier of the associated organization." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="organizations_contact_organization_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="organizations"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="organizations_contact_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="function" nullable="true" remarks="Contact person's function." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="start_date" nullable="true" remarks="Start date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="end_date" nullable="true" remarks="End date." size="13" type="date" typeCode="91"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="organizations_contact_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_organizations_contact_organization_id" unique="false">
+            <column ascending="true" name="organization_id"/>
+         </index>
+         <index name="idx_organizations_contact_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+      </table>
+      <table name="payments" remarks="Stores payments records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="2147483647" type="uuid" typeCode="1111">
+            <child column="payment_id" foreignKey="payments_history_payment_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="payments_history"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="payments_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="license_id" nullable="false" remarks="Identifier of the associated license." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="payments_license_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="3" name="amount" nullable="false" remarks="Payment amount." size="8" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="currency" nullable="false" remarks="" size="3" type="bpchar" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="payment_method" nullable="false" remarks="Payment method." size="2147483647" type="payments_method" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="payment_status" nullable="false" remarks="Payment status." size="2147483647" type="payments_status" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="7" name="payment_date" nullable="false" remarks="Payment date." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="transaction_reference" nullable="false" remarks="Transaction reference." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="invoice_document" nullable="true" remarks="Identifier of the invoice document." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="payments_invoice_document_fkey" implied="false" onDeleteCascade="false" schema="public" table="documents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="notes" nullable="true" remarks="Additional notes." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="11" name="created_at" nullable="false" remarks="Creation timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="12" name="updated_at" nullable="true" remarks="Last update timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="payments_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_payments_license_date" unique="false">
+            <column ascending="true" name="license_id"/>
+            <column ascending="true" name="payment_date"/>
+         </index>
+         <index name="idx_payments_payment_date" unique="false">
+            <column ascending="true" name="payment_date"/>
+         </index>
+         <index name="idx_payments_payment_status" unique="false">
+            <column ascending="true" name="payment_status"/>
+         </index>
+         <index name="idx_payments_person_date" unique="false">
+            <column ascending="true" name="person_id"/>
+            <column ascending="true" name="payment_date"/>
+         </index>
+         <index name="payments_transaction_reference_key" unique="true">
+            <column ascending="true" name="transaction_reference"/>
+         </index>
+         <checkConstraint constraint="(amount &gt; (0)::numeric)" name="check_amount_positive"/>
+         <checkConstraint constraint="(currency ~ '^[A-Z]{3}$'::text)" name="payments_currency_check"/>
+      </table>
+      <table name="payments_history" remarks="Stores payments history records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="payment_id" nullable="false" remarks="Identifier of the associated payment." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="payments_history_payment_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="payments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="previous_status" nullable="false" remarks="Previous status." size="2147483647" type="payments_method" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="new_status" nullable="false" remarks="New status." size="2147483647" type="payments_status" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="changed_by" nullable="true" remarks="Identifier of the user who made the change." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="payments_history_changed_by_fkey" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="5" name="changed_at" nullable="false" remarks="Change timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="reason" nullable="true" remarks="Reason for the change." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="payments_history_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_payments_history_changed_at" unique="false">
+            <column ascending="true" name="changed_at"/>
+         </index>
+         <index name="idx_payments_history_changed_by" unique="false">
+            <column ascending="true" name="changed_by"/>
+         </index>
+         <index name="idx_payments_history_payment_changed_at" unique="false">
+            <column ascending="true" name="payment_id"/>
+            <column ascending="true" name="changed_at"/>
+         </index>
+         <index name="idx_payments_history_payment_id" unique="false">
+            <column ascending="true" name="payment_id"/>
+         </index>
+      </table>
+      <table name="person_roles" remarks="Stores person role records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="role_id" nullable="false" remarks="Identifier of the associated role." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="person_roles_role_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="roles"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="person_roles_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="person_roles_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_person_roles_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_person_roles_role_id" unique="false">
+            <column ascending="true" name="role_id"/>
+         </index>
+         <index name="person_role_unique_0" unique="true">
+            <column ascending="true" name="role_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+      </table>
+      <table name="person_status" remarks="Stores person status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="status" foreignKey="persons_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="person_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="person_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="person_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="persons" remarks="Stores persons records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="ff2b_id" nullable="false" remarks="Unique identifier for the person within the organization." size="2147483647" type="uuid" typeCode="1111">
+            <child column="president_id" foreignKey="commissions_president_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="commissions"/>
+            <child column="person_id" foreignKey="commissions_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="commissions_members"/>
+            <child column="person_id" foreignKey="competition_participant_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competition_participant"/>
+            <child column="organizer_id" foreignKey="competitions_organizer_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+            <child column="person_id" foreignKey="consents_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="consents"/>
+            <child column="person_id" foreignKey="contacts_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="contacts"/>
+            <child column="responsible_id" foreignKey="contacts_responsible_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="contacts"/>
+            <child column="person_id" foreignKey="documents_persons_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_persons"/>
+            <child column="person_id" foreignKey="game_participant_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="game_participant"/>
+            <child column="person_id" foreignKey="game_side_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="game_side"/>
+            <child column="person_id" foreignKey="licenses_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+            <child column="person_id" foreignKey="organizations_contact_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organizations_contact"/>
+            <child column="person_id" foreignKey="payments_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="payments"/>
+            <child column="person_id" foreignKey="person_roles_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="person_roles"/>
+            <child column="person_id" foreignKey="projects_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="projects_members"/>
+            <child column="person_id" foreignKey="prospects_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="prospects"/>
+            <child column="person_id" foreignKey="referents_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="referents"/>
+            <child column="person_id" foreignKey="session_participants_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="session_participants"/>
+            <child column="coach_id" foreignKey="sessions_coach_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="sessions"/>
+            <child column="person_id" foreignKey="team_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="team_members"/>
+            <child column="person_id" foreignKey="users_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+            <child column="manager_id" foreignKey="volunteers_manager_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="volunteers"/>
+            <child column="person_id" foreignKey="volunteers_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="volunteers"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="first_name" nullable="false" remarks="Person's first name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="last_name" nullable="false" remarks="Person's last name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="birthdate" nullable="false" remarks="Person's date of birth." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="phone_number" nullable="false" remarks="Person's phone number." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="email" nullable="false" remarks="Email address." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="status" nullable="true" remarks="Status." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="persons_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="person_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="contact_origin" nullable="true" remarks="Origin of the contact." size="2147483647" type="contact_origin" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="address" nullable="true" remarks="Postal address." size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="municipality_id" nullable="true" remarks="Identifier of the associated municipality." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="persons_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="10" name="creation_date" nullable="true" remarks="Record creation timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <primaryKey column="ff2b_id" sequenceNumberInPK="1"/>
+         <index name="persons_pkey" unique="true">
+            <column ascending="true" name="ff2b_id"/>
+         </index>
+         <index name="idx_persons_birthdate" unique="false">
+            <column ascending="true" name="birthdate"/>
+         </index>
+         <index name="idx_persons_last_name" unique="false">
+            <column ascending="true" name="last_name"/>
+         </index>
+         <index name="idx_persons_municipality_id" unique="false">
+            <column ascending="true" name="municipality_id"/>
+         </index>
+      </table>
+      <table name="practice_sites" remarks="Stores practice sites records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="practice_site_id" foreignKey="competitions_practice_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+            <child column="practice_site_id" foreignKey="documents_practices_sites_practice_site_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_practices_sites"/>
+            <child column="practice_site_id" foreignKey="equipments_practice_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="equipments"/>
+            <child column="site_id" foreignKey="referents_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="referents"/>
+            <child column="site_id" foreignKey="slots_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="slots"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="municipality_id" nullable="false" remarks="Identifier of the associated municipality." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="practice_sites_municipality_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="address" nullable="true" remarks="Postal address." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="opening_date" nullable="true" remarks="Opening date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="closing_date" nullable="true" remarks="Closing date." size="13" type="date" typeCode="91"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="practice_sites_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_practice_site_municipality_id" unique="false">
+            <column ascending="true" name="municipality_id"/>
+         </index>
+         <index name="idx_practice_site_name" unique="false">
+            <column ascending="true" name="name"/>
+         </index>
+         <checkConstraint constraint="((closing_date IS NULL) OR (opening_date IS NULL) OR (closing_date &gt;= opening_date))" name="practice_sites_check"/>
+      </table>
+      <table name="projects" remarks="Stores projects records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="project_id" foreignKey="documents_projects_project_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="documents_projects"/>
+            <child column="project_id" foreignKey="projects_members_project_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="projects_members"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="true" remarks="Description." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="status" nullable="false" remarks="Status." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="projects_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="projects_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="start_date" nullable="false" remarks="Start date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="end_date" nullable="true" remarks="End date." size="13" type="date" typeCode="91"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="projects_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_projects_end_date" unique="false">
+            <column ascending="true" name="end_date"/>
+         </index>
+         <index name="idx_projects_start_date" unique="false">
+            <column ascending="true" name="start_date"/>
+         </index>
+         <index name="idx_projects_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+         <index name="idx_projects_status_start_date" unique="false">
+            <column ascending="true" name="status"/>
+            <column ascending="true" name="start_date"/>
+         </index>
+         <checkConstraint constraint="((end_date IS NULL) OR (end_date &gt;= start_date))" name="projects_check"/>
+      </table>
+      <table name="projects_members" remarks="Stores projects members records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="project_id" nullable="false" remarks="Identifier of the associated project." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="projects_members_project_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="projects"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="projects_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="project_role" nullable="false" remarks="Identifier of the project role." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="projects_members_project_role_fkey" implied="false" onDeleteCascade="false" schema="public" table="projects_members_role"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="joined_at" nullable="true" remarks="Date when the member joined." size="13" type="date" typeCode="91"/>
+         <primaryKey column="project_id" sequenceNumberInPK="1"/>
+         <primaryKey column="person_id" sequenceNumberInPK="2"/>
+         <index name="projects_members_pkey" unique="true">
+            <column ascending="true" name="project_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_projects_members_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_projects_members_project_id" unique="false">
+            <column ascending="true" name="project_id"/>
+         </index>
+         <index name="idx_projects_members_project_role" unique="false">
+            <column ascending="true" name="project_role"/>
+         </index>
+      </table>
+      <table name="projects_members_role" remarks="Stores project members role records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="project_role" foreignKey="projects_members_project_role_fkey" implied="false" onDeleteCascade="false" schema="public" table="projects_members"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="projects_members_role_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="projects_members_role_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="projects_members_role_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="projects_status" remarks="Stores projects status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="status" foreignKey="projects_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="projects_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="projects_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="projects_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="prospects" remarks="Stores prospects records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="true" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="prospects_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="organization_id" nullable="true" remarks="Identifier of the associated organization." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="prospects_organization_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="organizations"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="type" nullable="true" remarks="type." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="status" nullable="true" remarks="Status." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="interest" nullable="true" remarks="interest." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="prospects_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_prospects_organization_id" unique="false">
+            <column ascending="true" name="organization_id"/>
+         </index>
+         <index name="idx_prospects_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_prospects_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+         <index name="idx_prospects_type" unique="false">
+            <column ascending="true" name="type"/>
+         </index>
+      </table>
+      <table name="referent_status" remarks="Stores referent status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="status" foreignKey="referents_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="referents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="referent_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="referents" remarks="Stores referents records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="referent_id" foreignKey="sessions_referent_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="sessions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="referents_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="site_id" nullable="false" remarks="Identifier of the associated site." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="referents_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="practice_sites"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="start_date" nullable="false" remarks="Start date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="end_date" nullable="true" remarks="End date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="professional_phone" nullable="false" remarks="Professional phone number." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="professional_mail" nullable="false" remarks="Professional email address." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="status" nullable="true" remarks="Status." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="referents_status_fkey" implied="false" onDeleteCascade="false" schema="public" table="referent_status"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="referents_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_referents_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_referents_site_id" unique="false">
+            <column ascending="true" name="site_id"/>
+         </index>
+         <index name="idx_referents_site_start_date" unique="false">
+            <column ascending="true" name="site_id"/>
+            <column ascending="true" name="start_date"/>
+         </index>
+         <index name="idx_referents_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+         <checkConstraint constraint="((end_date IS NULL) OR (end_date &gt;= start_date))" name="referents_check"/>
+      </table>
+      <table name="regions" remarks="Stores regions records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="region_id" foreignKey="departments_region_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="departments"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="true" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="country_id" nullable="false" remarks="Identifier of the associated country." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="regions_country_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="countries"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="regions_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_regions_code" unique="false">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="idx_regions_country_id" unique="false">
+            <column ascending="true" name="country_id"/>
+         </index>
+      </table>
+      <table name="roles" remarks="Stores roles records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="5" type="int2" typeCode="5">
+            <child column="role_id" foreignKey="person_roles_role_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="person_roles"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="roles_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="roles_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="roles_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="seasons" remarks="Stores seasons records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="season_id" foreignKey="competitions_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="competitions"/>
+            <child column="season_id" foreignKey="licenses_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+            <child column="season_id" foreignKey="slots_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="slots"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="start_year" nullable="false" remarks="Season start year." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="end_year" nullable="false" remarks="Season end year." size="5" type="int2" typeCode="5"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="seasons_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="seasons_unique_check" unique="true">
+            <column ascending="true" name="start_year"/>
+            <column ascending="true" name="end_year"/>
+         </index>
+         <checkConstraint constraint="(end_year = (start_year + 1))" name="seasons_check"/>
+      </table>
+      <table name="session_participants" remarks="Stores session participants records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="person_id" foreignKey="fk_session_participant_license_person" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+            <parent column="ff2b_id" foreignKey="session_participants_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="session_id" nullable="false" remarks="Identifier of the associated session." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="session_participants_session_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="sessions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="license_id" nullable="false" remarks="Identifier of the associated license." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="session_participants_license_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="licenses"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="presence" nullable="true" remarks="Whether the person was present." size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="session_participants_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_session_participants_license_id" unique="false">
+            <column ascending="true" name="license_id"/>
+         </index>
+         <index name="idx_session_participants_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_session_participants_session_id" unique="false">
+            <column ascending="true" name="session_id"/>
+         </index>
+         <index name="session_participants_unique_0" unique="true">
+            <column ascending="true" name="person_id"/>
+            <column ascending="true" name="session_id"/>
+         </index>
+      </table>
+      <table name="sessions" remarks="Stores sessions records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="session_id" foreignKey="session_participants_session_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="session_participants"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="slot_id" nullable="false" remarks="Identifier of the associated slot." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="sessions_slot_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="slots"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="2" name="start_at" nullable="false" remarks="Start time." size="35" type="timestamptz" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="duration" nullable="false" remarks="Duration in minutes." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="referent_id" nullable="true" remarks="Identifier of the associated referent." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="sessions_referent_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="referents"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="coach_id" nullable="true" remarks="Identifier of the associated coach." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="sessions_coach_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="content" nullable="true" remarks="Session content." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="status" nullable="true" remarks="Status." size="2147483647" type="seance_status" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="sessions_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_sessions_coach_id" unique="false">
+            <column ascending="true" name="coach_id"/>
+         </index>
+         <index name="idx_sessions_referent_id" unique="false">
+            <column ascending="true" name="referent_id"/>
+         </index>
+         <index name="idx_sessions_slot_start_time" unique="false">
+            <column ascending="true" name="slot_id"/>
+            <column ascending="true" name="start_at"/>
+         </index>
+         <index name="idx_sessions_start_time" unique="false">
+            <column ascending="true" name="start_at"/>
+         </index>
+         <index name="idx_sessions_status" unique="false">
+            <column ascending="true" name="status"/>
+         </index>
+         <checkConstraint constraint="(duration &gt; 0)" name="sessions_duration_check"/>
+      </table>
+      <table name="slots" remarks="Stores slots records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="slot_id" foreignKey="sessions_slot_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="sessions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="site_id" nullable="false" remarks="Identifier of the associated site." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="slots_site_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="practice_sites"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="season_id" nullable="false" remarks="Identifier of the associated season." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="slots_season_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="seasons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="start_at" nullable="false" remarks="Start time." size="15" type="time" typeCode="92"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="end_at" nullable="false" remarks="End time." size="15" type="time" typeCode="92"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="capacity" nullable="true" remarks="Maximum capacity." size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="day_of_week" nullable="true" remarks="Day of the week, from 1 to 7." size="5" type="int2" typeCode="5"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="slots_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_slots_day_of_week" unique="false">
+            <column ascending="true" name="day_of_week"/>
+         </index>
+         <index name="idx_slots_season_id" unique="false">
+            <column ascending="true" name="season_id"/>
+         </index>
+         <index name="idx_slots_site_season" unique="false">
+            <column ascending="true" name="site_id"/>
+            <column ascending="true" name="season_id"/>
+         </index>
+         <index name="slots_unique_0" unique="true">
+            <column ascending="true" name="site_id"/>
+            <column ascending="true" name="season_id"/>
+            <column ascending="true" name="day_of_week"/>
+            <column ascending="true" name="start_at"/>
+            <column ascending="true" name="end_at"/>
+         </index>
+         <checkConstraint constraint="(capacity &gt;= 0)" name="slots_capacity_check"/>
+         <checkConstraint constraint="(end_at &gt; start_at)" name="slots_check"/>
+         <checkConstraint constraint="((day_of_week &gt;= 1) AND (day_of_week &lt;= 7))" name="slots_day_of_week_check"/>
+      </table>
+      <table name="team_members" remarks="Stores team members records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="team_id" nullable="false" remarks="Identifier of the associated team." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="team_members_team_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="teams"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="team_members_person_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="persons"/>
+         </column>
+         <primaryKey column="team_id" sequenceNumberInPK="1"/>
+         <primaryKey column="person_id" sequenceNumberInPK="2"/>
+         <index name="team_members_pkey" unique="true">
+            <column ascending="true" name="team_id"/>
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_team_members_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_team_members_team_id" unique="false">
+            <column ascending="true" name="team_id"/>
+         </index>
+      </table>
+      <table name="teams" remarks="Stores team records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="team_id" foreignKey="game_side_team_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="game_side"/>
+            <child column="team_id" foreignKey="team_members_team_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="team_members"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="competition_id" nullable="false" remarks="Identifier of the associated competition." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="teams_competition_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="competitions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="name" nullable="false" remarks="Name." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="teams_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="teams_unique_0" unique="true">
+            <column ascending="true" name="competition_id"/>
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="users" remarks="Stores users records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="gen_random_uuid()" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="2147483647" type="uuid" typeCode="1111">
+            <child column="uploaded_by" foreignKey="documents_uploaded_by_fkey" implied="false" onDeleteCascade="false" schema="public" table="documents"/>
+            <child column="user_id" foreignKey="logs_user_fk" implied="false" onDeleteCascade="false" schema="public" table="logs"/>
+            <child column="changed_by" foreignKey="payments_history_changed_by_fkey" implied="false" onDeleteCascade="false" schema="public" table="payments_history"/>
+            <child column="user_id" foreignKey="users_roles_user_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="users_roles"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="users_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="Email address." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="password" nullable="false" remarks="Hashed password." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="statut" nullable="true" remarks="Account status." size="5" type="int2" typeCode="5">
+            <parent column="id" foreignKey="users_statut_fkey" implied="false" onDeleteCascade="false" schema="public" table="users_status"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="5" name="creation_date" nullable="false" remarks="Record creation timestamp." size="35" type="timestamptz" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="users_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_users_email" unique="false">
+            <column ascending="true" name="email"/>
+         </index>
+         <index name="idx_users_statut" unique="false">
+            <column ascending="true" name="statut"/>
+         </index>
+         <index name="users_email_key" unique="true">
+            <column ascending="true" name="email"/>
+         </index>
+         <index name="users_person_id_key" unique="true">
+            <column ascending="true" name="person_id"/>
+         </index>
+      </table>
+      <table name="users_roles" remarks="Stores users roles records." schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="role_id" nullable="false" remarks="Identifier of the associated role." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="users_roles_role_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="access_roles"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="user_id" nullable="false" remarks="Identifier of the associated user." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="users_roles_user_id_fkey" implied="false" onDeleteCascade="true" schema="public" table="users"/>
+         </column>
+         <primaryKey column="role_id" sequenceNumberInPK="1"/>
+         <primaryKey column="user_id" sequenceNumberInPK="2"/>
+         <index name="users_roles_pkey" unique="true">
+            <column ascending="true" name="role_id"/>
+            <column ascending="true" name="user_id"/>
+         </index>
+         <index name="idx_users_roles_role_id" unique="false">
+            <column ascending="true" name="role_id"/>
+         </index>
+         <index name="idx_users_roles_user_id" unique="false">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+      <table name="users_status" remarks="Stores users status records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4">
+            <child column="statut" foreignKey="users_statut_fkey" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="label" nullable="false" remarks="Display label." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="users_status_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="users_status_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="users_status_label_key" unique="true">
+            <column ascending="true" name="label"/>
+         </index>
+         <index name="users_status_unique_0" unique="true">
+            <column ascending="true" name="code"/>
+            <column ascending="true" name="label"/>
+         </index>
+      </table>
+      <table name="volunteers" remarks="Stores volunteers records." schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="Unique identifier for this record." size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="person_id" nullable="false" remarks="Identifier of the associated person." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="volunteers_person_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="manager_id" nullable="false" remarks="Identifier of the manager." size="2147483647" type="uuid" typeCode="1111">
+            <parent column="ff2b_id" foreignKey="volunteers_manager_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="persons"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="mission" nullable="true" remarks="Mission to be performed." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="skills" nullable="true" remarks="Skills." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="availability" nullable="true" remarks="Availability." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="location" nullable="false" remarks="Volunteer location." size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="volunteers_location_fkey" implied="false" onDeleteCascade="false" schema="public" table="municipalities"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="application_date" nullable="true" remarks="Volunteer application date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="observations" nullable="true" remarks="Observations." size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="start_date" nullable="false" remarks="Start date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="end_date" nullable="true" remarks="End date." size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="tasks" nullable="true" remarks="Tasks performed." size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="volunteers_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="idx_volunteers_end_date" unique="false">
+            <column ascending="true" name="end_date"/>
+         </index>
+         <index name="idx_volunteers_location" unique="false">
+            <column ascending="true" name="location"/>
+         </index>
+         <index name="idx_volunteers_manager_id" unique="false">
+            <column ascending="true" name="manager_id"/>
+         </index>
+         <index name="idx_volunteers_person_id" unique="false">
+            <column ascending="true" name="person_id"/>
+         </index>
+         <index name="idx_volunteers_start_date" unique="false">
+            <column ascending="true" name="start_date"/>
+         </index>
+         <checkConstraint constraint="((end_date IS NULL) OR (end_date &gt;= start_date))" name="volunteers_check"/>
+      </table>
+   </tables>
+</database>
