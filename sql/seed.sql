@@ -17,7 +17,13 @@ VALUES (1, 'Guadeloupe', '971', 1)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO "municipalities" ("id", "name", "zip_code", "insee_code", "departement_id", "development_status") 
-VALUES (1, 'Deshaies', '97126', '97111', 1, 'pilote') 
+VALUES (1, 'Deshaies', '97126', '97111', 1, 1) 
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO "development_status" ("id", "code", "label", "description") VALUES
+(1, "developed", "Développé", "La commune est bien développé"),
+(2, "not_developed", "Non développé", "La commune n'est actuellement pas développé"),
+(3, "ongoing_development", "En cours de développement", "Développement en cours dans la commune")
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO "license_type" ("id", "license_code", "license_label") VALUES
@@ -165,3 +171,4 @@ SELECT setval(pg_get_serial_sequence('referent_status', 'id'), COALESCE(MAX(id),
 SELECT setval(pg_get_serial_sequence('equipment_category', 'id'), COALESCE(MAX(id), 1)) FROM "equipment_category";
 SELECT setval(pg_get_serial_sequence('equipment_status', 'id'), COALESCE(MAX(id), 1)) FROM "equipment_status";
 SELECT setval(pg_get_serial_sequence('organizations_type', 'id'), COALESCE(MAX(id), 1)) FROM "organizations_type";
+SELECT setval(pg_get_serial_sequence('development_status', 'id'), COALESCE(MAX(id), 1)) FROM "development_status";
