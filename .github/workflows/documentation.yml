@@ -54,6 +54,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
+      - name: Install Sqitch
+        run: |
+          sudo apt-get install -y sqitch libdbd-pg-perl
+
       - name: Wait for PostgreSQL
         run: |
           until pg_isready -h localhost -p 5432 -U postgres -d ff2b; do
@@ -61,16 +65,12 @@ jobs:
             sleep 2
           done
 
-      - name: Initialize database
+      - name: Deploy database with Sqitch
         env:
           PGPASSWORD: postgres
         run: |
-          psql \
-            -h localhost \
-            -p 5432 \
-            -U postgres \
-            -d ff2b \
-            -f database/schema.sql
+          sqitch deploy \
+            db:pg://postgres:postgres@localhost:5432/ff2b
 
       - name: Prepare documentation directory
         run: |
