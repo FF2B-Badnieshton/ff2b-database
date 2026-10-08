@@ -1,24 +1,33 @@
-name: Generate database documentation
+name: Database Documentation
 
 on:
-  workflow_dispatch:
-
   push:
     branches:
       - main
+
     paths:
+      - "database/**"
       - "deploy/**"
       - "revert/**"
       - "verify/**"
       - "sqitch.conf"
       - "sqitch.plan"
+      - ".github/workflows/docs.yml"
+
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  generate-docs:
-    name: Generate SchemaSpy documentation
+  build:
+    name: Build database documentation
     runs-on: ubuntu-latest
 
     services:
@@ -37,43 +46,36 @@ jobs:
           --health-retries=10
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Install PostgreSQL client
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
-      - name: Install Sqitch
-        run: |
-          sudo apt-get install -y sqitch libdbd-pg-perl
-
       - name: Wait for PostgreSQL
-        env:
-          PGPASSWORD: postgres
         run: |
-          until pg_isready \
-            -h localhost \
-            -p 5432 \
-            -U postgres \
-            -d ff2b
-          do
+          until pg_isready -h localhost -p 5432 -U postgres -d ff2b; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
 
-      - name: Deploy database with Sqitch
+      - name: Initialize database
         env:
           PGPASSWORD: postgres
         run: |
-          sqitch deploy \
-            db:pg://postgres:postgres@localhost:5432/ff2b
+          psql \
+            -h localhost \
+            -p 5432 \
+            -U postgres \
+            -d ff2b \
+            -f database/schema.sql
 
-      - name: Create documentation directory
+      - name: Prepare documentation directory
         run: |
-          rm -rf site/
-          mkdir -p site/
+          rm -rf site
+          mkdir -p site
 
       - name: Generate SchemaSpy documentation
         run: |
@@ -88,24 +90,30 @@ jobs:
             -db ff2b \
             -u postgres \
             -p postgres \
-            -schemas public \
+            -schemas public
 
       - name: Check generated documentation
         run: |
-          test -f site/index.html
+          test -f site/public/index.html
 
-      - name: Commit documentation
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
 
-          git add -f site
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/public
 
-          if git diff --cached --quiet; then
-            echo "No documentation changes."
-            exit 0
-          fi
+  deploy:
+    name: Deploy database documentation
+    needs: build
+    runs-on: ubuntu-latest
 
-          git commit -m "docs: update database documentation"
-          git push
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
