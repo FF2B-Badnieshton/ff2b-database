@@ -49,10 +49,6 @@ jobs:
             libdbd-pg-perl \
             postgresql-client
 
-      - name: Check Sqitch plan
-        run: |
-          sqitch plan
-
       - name: Deploy migrations
         env:
           PGPASSWORD: postgres
