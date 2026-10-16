@@ -143,6 +143,12 @@ INSERT INTO "person_status" ("id", "code", "label", "description") VALUES
 (4, 'deleted', 'Supprimé', 'La personne à été supprimé')
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO "court_categories" ("id", "code", "label", "description") VALUES
+(1, 'adult', 'Adulte', 'Terrain de catégorie adulte (12-99 ans)'),
+(2, 'child', 'Enfant', 'Terrain de catégorie enfant (6-12 ans)'),
+(3, 'both', 'Les deux', 'Terrain convenant tant bien à la catégorie enfant que adulte')
+ON CONFLICT (id) DO NOTHING;
+
 COMMIT;
 --==============================================================================
 -- RECALAGE DES SÉQUENCES D'AUTO-INCRÉMENTATION
@@ -172,3 +178,4 @@ SELECT setval(pg_get_serial_sequence('equipment_category', 'id'), COALESCE(MAX(i
 SELECT setval(pg_get_serial_sequence('equipment_status', 'id'), COALESCE(MAX(id), 1)) FROM "equipment_status";
 SELECT setval(pg_get_serial_sequence('organizations_type', 'id'), COALESCE(MAX(id), 1)) FROM "organizations_type";
 SELECT setval(pg_get_serial_sequence('development_status', 'id'), COALESCE(MAX(id), 1)) FROM "development_status";
+SELECT setval(pg_get_serial_sequence('court_categories', 'id'), COALESCE(MAX(id), 1)) FROM 'court_categories';
