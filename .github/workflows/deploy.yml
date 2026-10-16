@@ -106,17 +106,11 @@ jobs:
           sqitch config --local target.prod.uri \
             "db:pg://${PROD_DB_USER}@${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}"
 
-      - name: Check production status
-        env:
-          PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-        run: |
-          sqitch status prod
-
       - name: Deploy migrations
         env:
           PGPASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
-          sqitch deploy prod
+          sqitch deploy --verify prod
 
       - name: Verify production database
         env:
