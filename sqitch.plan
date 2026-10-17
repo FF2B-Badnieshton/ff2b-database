@@ -6,3 +6,4 @@ appschema 2026-10-07T19:56:57Z Alexandre LARUE <contact@alexandre-larue.fr> # In
 courts 2026-10-11T14:36:04Z Alexandre LARUE <contact@alexandre-larue.fr> # Add the courts table to manage the courts of a practice site
 persons_document_mentions 2026-10-16T13:42:23Z Alexandre LARUE <contact@alexandre-larue.fr> # Add the persons_documents_mentions table
 price_licences 2026-10-16T17:40:38Z Alexandre LARUE <contact@alexandre-larue.fr> # Add table license_type_prices
+competition_organizer 2026-10-17T21:57:43Z Alexandre LARUE <contact@alexandre-larue.fr> # Alter table competitions to add organizing_organisation

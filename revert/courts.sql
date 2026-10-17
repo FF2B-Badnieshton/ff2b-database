@@ -2,8 +2,10 @@
 
 BEGIN;
 
-DROP TABLE IF EXISTS "courts" CASCADE;
-DROP TABLE IF EXISTS "courts_categories" CASCADE;
-DROP TABLE IF EXISTS "courts_sizes"
+DROP TABLE courts;
+DROP TABLE court_categories;
+DROP TABLE courts_sizes;
+
+
 
 COMMIT;

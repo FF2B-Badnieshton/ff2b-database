@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "license_type_prices" (
     -- Season ID referring to a season into the table seasons
     "season_id" SMALLINT NOT NULL,
     -- Amount of the license_type
-    "amount" SMALLINT UNSIGNED NOT NULL,
+    "amount" SMALLINT NOT NULL,
     -- Currency of the price
     "currency" CHAR(3) NOT NULL,
 
