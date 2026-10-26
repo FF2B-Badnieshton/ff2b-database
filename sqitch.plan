@@ -8,3 +8,4 @@ persons_document_mentions 2026-10-16T13:42:23Z Alexandre LARUE <contact@alexandr
 price_licences 2026-10-16T17:40:38Z Alexandre LARUE <contact@alexandre-larue.fr> # Add table license_type_prices
 competition_organizer 2026-10-17T21:57:43Z Alexandre LARUE <contact@alexandre-larue.fr> # Alter table competitions to add organizing_organisation
 players 2026-10-22T19:21:39Z Alexandre LARUE <contact@alexandre-larue.fr> # Add players table to track the sportive career of a person & adaptation of bdd schema to the registration form
+arbitrator 2026-10-26T10:27:26Z Alexandre LARUE <contact@alexandre-larue.fr> # Add arbitrator for competition
